@@ -1,0 +1,35 @@
+# Set some default verbose
+/control/verbose 1
+/control/saveHistory
+/run/verbose 1
+#
+# Change the default number of threads (in multi-threaded mode)
+/run/numberOfThreads 1
+#
+# Initialize kernel
+/run/initialize
+
+/crystal/det/crystalMaterial CsI
+/crystal/det/crystalWidth 48 mm
+/crystal/det/crystalX0Length 2
+/crystal/det/teflonThickness 0.08 mm
+/crystal/det/teflonCoatings 5
+/crystal/det/sipmXY 6 mm
+/crystal/det/sipmZ 2 mm
+/crystal/det/epoxyZ 2 mm
+/crystal/det/sipmActiveXY
+/crystal/det/sipmActiveZ 2 mm
+
+/vis/open OGL 600x600-0+0
+/vis/drawVolume
+#/vis/viewer/set/viewpointThetaPhi 90 180
+/vis/scene/add/axes 0 0 0 10 cm
+/vis/viewer/set/viewpointVector -1 0 0
+/vis/viewer/set/lightsVector -1 0 0
+#
+# Specify style (surface, wireframe, auxiliary edges,...)
+/vis/viewer/set/style surface
+#/vis/viewer/set/auxiliaryEdge true
+#/vis/viewer/set/lineSegmentsPerCircle 100
+###/vis/sceneHandler/attach
+#/run/beamOn 1000
