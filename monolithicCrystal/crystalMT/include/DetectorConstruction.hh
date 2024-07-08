@@ -3,6 +3,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+#include <fstream>
 
 class G4VPhysicalVolume;
 class DetectorMessenger;
@@ -38,7 +39,7 @@ public:
   G4double fPlasticZ ;
   G4double fActiveZ ;
 
-
+  std::ofstream fSensorPosFile;
 
 };
 

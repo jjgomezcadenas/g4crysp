@@ -21,11 +21,15 @@ DetectorConstruction::DetectorConstruction()
 {
     fMessenger = new DetectorMessenger(this);
     G4cout << " DetectorConstruction " << G4endl;
+
+    fSensorPosFile.open("sensor_positions.csv");
+    fSensorPosFile << "sensor_id, sensor_x, sensor_y, sensor_z\n";
 }
 
 DetectorConstruction::~DetectorConstruction()
 {
     delete fMessenger;
+    fSensorPosFile.close();
 }
 
 void DetectorConstruction::display() const
@@ -176,20 +180,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   epoxy_logic->SetVisAttributes(cvis::Yellow());
 
 
-  // Position the plastic
+  // Position the expoxy
   
-  auto activePosZ = -(fSipmXY - fSipmZ)/2; //
+  auto activePosZ = -(fSipmXY - fEpoxyZ)/2; //
   new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), epoxy_logic,
                     "EPOXY", sipm_logic, false, 0, false);
   
   // Position the photodiodes after the plastic
   
-  activePosZ = -(fSipmXY - fSipmZ - fActiveZ)/2; //
+  activePosZ = -(fSipmXY - fEpoxyZ - fActiveZ)/2; //
   new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), active_logic,
                     "PHOTODIODES", sipm_logic, false, 0, false);
   
   // Position the epoxy after the active
-  activePosZ = -(fSipmXY  - fSipmZ - fActiveZ  - fEpoxyZ)/2; //
+  activePosZ = -(fSipmXY  - fEpoxyZ - fActiveZ  - fSipmZ)/2; //
   auto sipm_active_phys = new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), plastic_logic,
                                             "SiPMCase", sipm_logic, false, 0, false);
 
@@ -208,9 +212,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // Position the SiPMs at the exit (z >0) of the crystal and across xy
   
   auto xz = (fCrystalLength)/2; //
-  new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), epoxy_logic,
-                    "EPOXY", lab_logic, false, 0, false);
-
+  
   auto n_rows = (int)fCrystalWidth/fSipmXY;
   auto n_cols = n_rows;
     
@@ -222,12 +224,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
           auto silabel = "SiPM" + label;
           auto xr = irow * fSipmXY - fCrystalWidth/2 + fSipmXY/2;
           auto yr = icol * fSipmXY - fCrystalWidth/2 + fSipmXY/2;
-          std::cout << "Placing SiPM copy " << silabel
+          G4cout << "Placing SiPM copy " << silabel
                     <<" row = " << irow << " column =" << icol
                     <<" x = " << xr 
                     <<" y = " << yr
                     <<" z = " << xz
-                    << std::endl;
+                    << G4endl;
+          fSensorPosFile << icol + irow <<  "," << xr << "," << yr << "," << xz <<"\n";
+         
         
           new G4PVPlacement(0, G4ThreeVector(xr, yr, xz),
                             sipm_logic, "SiPM" + label, lab_logic, true, irow * n_cols + icol);

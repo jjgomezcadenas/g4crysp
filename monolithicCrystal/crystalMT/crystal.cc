@@ -9,10 +9,9 @@
 #include "G4SteppingVerbose.hh"
 #include "G4UImanager.hh"
 #include "QBBC.hh"
-
+#include "G4OpticalPhysics.hh"
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
-
 #include "Randomize.hh"
 #include "GlobalPars.hh"
 
@@ -48,6 +47,9 @@ int main(int argc,char** argv)
   // Physics list
   auto physicsList = new QBBC;
   physicsList->SetVerboseLevel(0);
+  auto opticalPhysics = new G4OpticalPhysics();
+
+  physicsList->RegisterPhysics(opticalPhysics);
   runManager->SetUserInitialization(physicsList);
 
 

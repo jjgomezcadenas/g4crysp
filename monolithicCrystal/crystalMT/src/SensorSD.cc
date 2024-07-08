@@ -88,7 +88,7 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   auto time = step->GetPostStepPoint()->GetGlobalTime();
   hit->Fill(time);
 
-  track->SetTrackStatus(fStopAndKill);
+  //track->SetTrackStatus(fStopAndKill);
 
   return true;
 }
