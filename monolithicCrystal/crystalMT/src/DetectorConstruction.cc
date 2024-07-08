@@ -16,6 +16,11 @@
 #include "GlobalPars.hh"
 
 
+#include <G4OpticalSurface.hh>
+#include <G4LogicalSkinSurface.hh>
+#include <G4LogicalBorderSurface.hh>
+
+
 
 DetectorConstruction::DetectorConstruction()
 {
@@ -116,6 +121,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto fCrystalLogic = new G4LogicalVolume(crystal, material, "CRYSTAL");
   fCrystalLogic->SetVisAttributes(cvis::LightBlueAlpha());
 
+  
+
+  // Place block  in the Lab
+    
+  auto crystal_phys      = new G4PVPlacement(0, G4ThreeVector(), fCrystalLogic,  "CRYSTAL",
+                                             lab_logic,false, 0, true);    
+                                                                 
 
   //----Teflon ----------
   // Teflown wrapping = thickness of wrap x number of wraps
@@ -151,6 +163,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                            "TEFLON_BACK");
   fTeflonBackLogic->SetVisAttributes(G4Colour::White ());
 
+  auto teflon_sides_phys = new G4PVPlacement(0, G4ThreeVector(), fTeflonSidesLogic, "TEFLON_SIDES",
+                                             lab_logic,false, 0, true);
+
+  auto teflon_back_phys = new G4PVPlacement(0, G4ThreeVector(0, 0, -(fCrystalLength +  teflon_thickness_tot) /2), fTeflonBackLogic,"TEFLON_BACK",
+                                            lab_logic,false, 0, true);
+
+ 
+  // define an optical surface for Teflon (LUT model)
+
+  G4OpticalSurface* ptfe_surface = new G4OpticalSurface("PTFE_SURFACE");
+  ptfe_surface->SetType(dielectric_LUT);
+  ptfe_surface->SetFinish(groundteflonair);
+  ptfe_surface->SetModel(LUT);
+
+  // G4LogicalBorderSurface defines the optical properties at the boundary between two physical volumes.
+    
+  new G4LogicalBorderSurface("CRYSTAL_PTFE", crystal_phys, teflon_sides_phys, ptfe_surface);
+  new G4LogicalBorderSurface("CRYSTAL_PTFE_BACK", crystal_phys, teflon_back_phys, ptfe_surface);
+
   //-------SiPMs------
 
 
@@ -179,6 +210,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto epoxy_logic  = new G4LogicalVolume(epoxy_solid, silicon, "EPOXY");
   epoxy_logic->SetVisAttributes(cvis::Yellow());
 
+  G4OpticalSurface* sipm_opsurf = new G4OpticalSurface("SIPM_OPSURF", unified, polished, dielectric_metal);
+  sipm_opsurf->SetMaterialPropertiesTable(copt::SipmHamamatsu());
+
+  new G4LogicalSkinSurface("SIPM_OPSURF", active_logic, sipm_opsurf);
+
 
   // Position the expoxy
   
@@ -198,17 +234,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                             "SiPMCase", sipm_logic, false, 0, false);
 
 
-  // Place block and Teflon in the Lab
-    
-  auto crystal_phys      = new G4PVPlacement(0, G4ThreeVector(), fCrystalLogic,  "CRYSTAL",
-                                             lab_logic,false, 0, true);    
-
-  auto teflon_sides_phys = new G4PVPlacement(0, G4ThreeVector(), fTeflonSidesLogic, "TEFLON_SIDES",
-                                             lab_logic,false, 0, true);
-
-  auto teflon_back_phys = new G4PVPlacement(0, G4ThreeVector(0, 0, -(fCrystalLength +  teflon_thickness_tot) /2), fTeflonBackLogic,"TEFLON_BACK",
-                                            lab_logic,false, 0, true);
-
+ 
   // Position the SiPMs at the exit (z >0) of the crystal and across xy
   
   auto xz = (fCrystalLength)/2; //

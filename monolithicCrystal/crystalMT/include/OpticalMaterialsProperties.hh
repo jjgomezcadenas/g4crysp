@@ -21,6 +21,8 @@ namespace copt {
 
   G4MaterialPropertiesTable* Vacuum();
 
+  G4MaterialPropertiesTable* SipmHamamatsu();
+
   G4MaterialPropertiesTable* GlassEpoxy();
 
   G4MaterialPropertiesTable* FusedSilica();

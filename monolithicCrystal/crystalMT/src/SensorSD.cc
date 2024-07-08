@@ -61,6 +61,20 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   G4ParticleDefinition* pdef = track->GetDefinition();
   if (pdef != G4OpticalPhoton::Definition()) return false;
 
+  // G4StepPoint* endPoint   = step->GetPostStepPoint();
+  // G4StepPoint* startPoint = step->GetPreStepPoint();
+
+  // const G4VProcess* pdsb = startPoint->GetProcessDefinedStep();
+  // G4String procnameb     = pdsb->GetProcessName();
+
+  // const G4VProcess* pdsa = endPoint->GetProcessDefinedStep();
+  // G4String procnamea     = pdsa->GetProcessName();
+
+  // G4cout << " Pre-step: process name = " << procnameb << G4endl;
+  // G4cout << " Post-step: process name = " << procnamea << G4endl;
+
+
+  //
   const G4VTouchable* touchable = step->GetPostStepPoint()->GetTouchable();
 
   G4int sensor_id = FindSensorID(touchable);
