@@ -111,10 +111,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
         auto py = pmod * momentum_direction.y();
         auto pz = pmod * momentum_direction.z();
 
-        if (i< 100)
-          {
-            fPrimParFile << x0, y0, z0, px/pmod, py/pmpd, pz/pmod, pmod, time + irow <<  "," << xr << "," << yr << "," << xz <<"\n";
-          }
+        // if (i< 100)
+        //   {
+        //     fPrimParFile << x0, y0, z0, px/pmod, py/pmpd, pz/pmod, pmod, time + irow <<  "," << xr << "," << yr << "," << xz <<"\n";
+        //     }
         //   {
         //     G4cout << " First photon: x0 (mm) = " << x0/mm <<" y0 = " << y0/mm << " z0 = " << z0/mm
         //            << " px (eV) = "<< px/eV << " py ="  << py/eV <<" pz = " << pz/eV
