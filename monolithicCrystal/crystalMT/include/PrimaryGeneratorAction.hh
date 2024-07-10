@@ -9,6 +9,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4PhysicsOrderedFreeVector.hh"
 #include "globals.hh"
+#include <fstream>
 
 class G4Event;
 class G4Box;
@@ -32,6 +33,7 @@ public:
   G4int fNphotons = 100;
   G4double fFano = 1.1;
   G4bool fGaussian = true;
+  std::ofstream fPrimGenFile;
     
 private:
   void ComputeCumulativeDistribution(const G4PhysicsOrderedFreeVector& pdf, G4PhysicsOrderedFreeVector& cdf);
