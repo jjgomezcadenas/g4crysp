@@ -31,11 +31,13 @@ DetectorConstruction::DetectorConstruction()
     fSensorPosFile << "sensor_id, sensor_x, sensor_y, sensor_z\n";
 }
 
+
 DetectorConstruction::~DetectorConstruction()
 {
     delete fMessenger;
     fSensorPosFile.close();
 }
+
 
 void DetectorConstruction::display() const
 {
@@ -99,6 +101,7 @@ G4Material* DetectorConstruction::DefineMaterial()
 
 }
 
+
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
   auto material =  DefineMaterial();
@@ -121,10 +124,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto fCrystalLogic = new G4LogicalVolume(crystal, material, "CRYSTAL");
   fCrystalLogic->SetVisAttributes(cvis::LightBlueAlpha());
 
-  
 
   // Place block  in the Lab
-    
   auto crystal_phys      = new G4PVPlacement(0, G4ThreeVector(), fCrystalLogic,  "CRYSTAL",
                                              lab_logic,false, 0, true);    
                                                                  
@@ -171,24 +172,23 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
  
   // define an optical surface for Teflon (LUT model)
-
   G4OpticalSurface* ptfe_surface = new G4OpticalSurface("PTFE_SURFACE");
   ptfe_surface->SetType(dielectric_LUT);
   ptfe_surface->SetFinish(groundteflonair);
   ptfe_surface->SetModel(LUT);
 
   // G4LogicalBorderSurface defines the optical properties at the boundary between two physical volumes.
-    
   new G4LogicalBorderSurface("CRYSTAL_PTFE", crystal_phys, teflon_sides_phys, ptfe_surface);
   new G4LogicalBorderSurface("CRYSTAL_PTFE_BACK", crystal_phys, teflon_back_phys, ptfe_surface);
 
   //-------SiPMs------
 
-
   G4Material* plastic    = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYCARBONATE");
   G4Material* silicon    = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
   G4Material* silicone   = cmat::OpticalSilicone();
-
+  silicone->SetMaterialPropertiesTable(copt::OptCoupler());
+  silicon->SetMaterialPropertiesTable(copt::SipmHamamatsu());
+  
   // Define a volume for SiPMs.
   auto sipm_case  = new G4Box("SiPmCase", fSipmXY/2, fSipmXY/2, fSipmZ/2);
   auto sipm_logic = new G4LogicalVolume(sipm_case, air, "SiPmCase");
@@ -207,38 +207,37 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   // SiPM optical coupling (made of silicona --Epoxy) 
   auto epoxy_solid  = new G4Box("EPOXY", fActiveXY/2, fActiveXY/2, fEpoxyZ/2);
-  auto epoxy_logic  = new G4LogicalVolume(epoxy_solid, silicon, "EPOXY");
+  auto epoxy_logic  = new G4LogicalVolume(epoxy_solid, silicone, "EPOXY");
   epoxy_logic->SetVisAttributes(cvis::Yellow());
 
   G4OpticalSurface* sipm_opsurf = new G4OpticalSurface("SIPM_OPSURF", unified, polished, dielectric_metal);
   sipm_opsurf->SetMaterialPropertiesTable(copt::SipmHamamatsu());
 
-  new G4LogicalSkinSurface("SIPM_OPSURF", active_logic, sipm_opsurf);
+  //new G4LogicalSkinSurface("SIPM_OPSURF", active_logic, sipm_opsurf);
 
 
   // Position the expoxy
   
-  auto activePosZ = -(fSipmXY - fEpoxyZ)/2; //
+  auto activePosZ = -(fSipmZ - fEpoxyZ)/2; //
   new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), epoxy_logic,
                     "EPOXY", sipm_logic, false, 0, false);
   
   // Position the photodiodes after the plastic
   
-  activePosZ = -(fSipmXY - fEpoxyZ - fActiveZ)/2; //
+  activePosZ = -fSipmZ/2 + fEpoxyZ + fActiveZ/2; //
   new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), active_logic,
                     "PHOTODIODES", sipm_logic, false, 0, false);
   
   // Position the epoxy after the active
-  activePosZ = -(fSipmXY  - fEpoxyZ - fActiveZ  - fSipmZ)/2; //
+  activePosZ = -fSipmZ/2  + fEpoxyZ + fActiveZ + fPlasticZ/2; 
   auto sipm_active_phys = new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), plastic_logic,
                                             "SiPMCase", sipm_logic, false, 0, false);
 
 
  
   // Position the SiPMs at the exit (z >0) of the crystal and across xy
-  
-  auto xz = (fCrystalLength)/2; //
-  
+  auto xz = (fCrystalLength + fSipmZ )/2; //
+    
   auto n_rows = (int)fCrystalWidth/fSipmXY;
   auto n_cols = n_rows;
     

@@ -15,6 +15,15 @@
 #include <G4RunManager.hh>
 #include "G4SystemOfUnits.hh"
 #include "GlobalPars.hh"
+#include <globals.hh>
+#include "G4PhysicalConstants.hh"
+#include <G4MaterialPropertiesTable.hh>
+#include "G4LogicalVolumeStore.hh"
+#include "G4LogicalVolume.hh"
+#include <G4Material.hh>
+#include "Randomize.hh"
+#include "G4MaterialPropertiesTable.hh"
+#include "G4MaterialPropertyVector.hh"
 #include <iostream>
 
 SensorSD::SensorSD(G4String sdname): G4VSensitiveDetector(sdname)  
@@ -22,18 +31,16 @@ SensorSD::SensorSD(G4String sdname): G4VSensitiveDetector(sdname)
   
   // Register the name of the collection of hits
   collectionName.insert(GlobalPars::Instance()->gSDCollection);
+
+  // Get a pointer to the crystal will need it later. 
+  fenvLV = G4LogicalVolumeStore::GetInstance()->GetVolume("CRYSTAL");
+
+  if (!fenvLV) {
+    G4Exception("[SensorSD]", "Constructor", FatalException,
+                "could not get the pointer of logical volume CRYSTAL!");
+  }
+
 }
-
-
-// SensorSD::~SensorSD()
-// {
-// }
-
-
-// G4String SensorSD::GetCollectionUniqueName()
-// {
-//   return "SensorHitsCollection";
-// }
 
 
 /// Initialization of the sensitive detector. Invoked at the beginning
@@ -56,29 +63,17 @@ void SensorSD::Initialize(G4HCofThisEvent* HCE)
 G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
   // Check whether the track is an optical photon
+  //G4cout << "inside ProcessHits" << G4endl;
   
   G4Track* track = step->GetTrack();
   G4ParticleDefinition* pdef = track->GetDefinition();
   if (pdef != G4OpticalPhoton::Definition()) return false;
 
-  // G4StepPoint* endPoint   = step->GetPostStepPoint();
-  // G4StepPoint* startPoint = step->GetPreStepPoint();
 
-  // const G4VProcess* pdsb = startPoint->GetProcessDefinedStep();
-  // G4String procnameb     = pdsb->GetProcessName();
-
-  // const G4VProcess* pdsa = endPoint->GetProcessDefinedStep();
-  // G4String procnamea     = pdsa->GetProcessName();
-
-  // G4cout << " Pre-step: process name = " << procnameb << G4endl;
-  // G4cout << " Post-step: process name = " << procnamea << G4endl;
-
-
-  //
   const G4VTouchable* touchable = step->GetPostStepPoint()->GetTouchable();
 
   G4int sensor_id = FindSensorID(touchable);
-
+  
   SensorHit* hit = nullptr;
   for (size_t i=0; i<fHitsCollection->entries(); i++) {
     if ((*fHitsCollection)[i]->fSensorID == sensor_id) {
@@ -99,11 +94,42 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
       fHitsCollection->insert(hit);
     }
 
-  auto time = step->GetPostStepPoint()->GetGlobalTime();
+  //time that photon needs to propagate from vertex to sensor
+  auto gtime = step->GetPostStepPoint()->GetGlobalTime(); 
+  auto en = track->GetKineticEnergy();
+  auto wl = 1240.0 / (en/eV);
+
+  // Retrieve the scintillation time constant
+  G4Material* mat = fenvLV->GetMaterial();
+
+  //G4cout << "found material = " << mat->GetName() << G4endl;
+  
+  G4MaterialPropertiesTable* mpt = mat->GetMaterialPropertiesTable();
+  if (!mpt) {
+    G4Exception("[SensorSD]", "Process Hits", FatalException,
+                "Material Properties Table is not defined.");
+  }
+
+
+  // std::cout << "Material Properties Table:" << std::endl;
+  
+  // const std::vector<G4String>& constPropertyNames = mpt->GetMaterialConstPropertyNames();
+  // std::cout << "Constant Property Names:" << std::endl;
+  // for (const auto& name : constPropertyNames) {
+  //     std::cout << "  " << name << std::endl;
+  // }
+  
+
+  // Sample random time using exponential distribution
+  auto timeConstant = mpt->GetConstProperty("SCINTILLATIONTIMECONSTANT1");
+  auto decayTime = -timeConstant * std::log(G4UniformRand());
+  auto time = gtime + decayTime; // decay time + propagation time
+
+  //G4cout << " SensorSD::ProcessHits:: time (ns)= " << time/ns <<  " wl (nm) = " << wl <<  G4endl; 
   hit->Fill(time);
 
-  //track->SetTrackStatus(fStopAndKill);
-
+  track->SetTrackStatus(fStopAndKill); //hit registered we can kill the track
+  
   return true;
 }
 
@@ -113,7 +139,7 @@ G4int SensorSD::FindSensorID(const G4VTouchable* touchable)
   auto sensorid = touchable->GetCopyNumber(0); // "PHOTODIODES", one copy per SiPM = 0
   auto  motherid = touchable->GetCopyNumber(1);// SiPM id, 64 copies.
 
-  //  std::cout << "sensor id = " << sensorid << " motherid =" << motherid << std::endl;
+  //std::cout << "sensor id = " << sensorid << " motherid =" << motherid << std::endl;
   sensorid = motherid + sensorid; //sensorid =0 always in this example, but keep like this for clarity
   
   // auto sensorid = touchable->GetCopyNumber(0);

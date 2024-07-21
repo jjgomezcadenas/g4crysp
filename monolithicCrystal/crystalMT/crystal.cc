@@ -14,6 +14,7 @@
 #include "G4UIExecutive.hh"
 #include "Randomize.hh"
 #include "GlobalPars.hh"
+#include "PrimaryGeneratorMessenger.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -38,12 +39,23 @@ int main(int argc,char** argv)
 
   // Set mandatory initialization classes
 
-  // Set global values
+  // Set the name of the sensor hit collection (arbitrary) in globals
     GlobalPars::Instance()->gSDCollection = "SensorHitsCollection";
-  //
+  
   // Detector construction
   runManager->SetUserInitialization(new DetectorConstruction());
 
+  // Invoke here the PrimaryGeneratorMessenger, so that values can be
+  // passed to globals (and thus accepted by the PrimaryGenerator constructor)
+  
+  PrimaryGeneratorMessenger* pgMessenger = new PrimaryGeneratorMessenger();
+
+  G4cout << "Values of Primary Generator Messenger have been set" << G4endl;
+  G4cout << "Gaussian around scintillation average in crystal? = " << GlobalPars::Instance()->fGaussian
+         << " Fano = " << GlobalPars::Instance()->fFano
+         << " Average number of photons = " << GlobalPars::Instance()->fNphotons
+         << G4endl; 
+  
   // Physics list
   auto physicsList = new QBBC;
   physicsList->SetVerboseLevel(0);
@@ -86,6 +98,7 @@ int main(int argc,char** argv)
 
   delete visManager;
   delete runManager;
+  delete pgMessenger;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....

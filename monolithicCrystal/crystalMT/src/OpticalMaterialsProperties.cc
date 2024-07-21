@@ -60,7 +60,28 @@ namespace copt {
       0
     };
 
+   G4double um2 = micrometer*micrometer;
+
+    G4double constTerm  = 1.4954;
+    G4double squareTerm = 0.008022 * um2;
+    G4double quadTerm   = 0.;
+
+    const G4int ri_entries = 100;
+    G4double eWidth = (optPhotMaxE_ - optPhotMinE_) / ri_entries;
+
+    std::vector<G4double> ri_energy;
+    for (int i=0; i<ri_entries; i++) {
+      ri_energy.push_back(optPhotMinE_ + i * eWidth);
+    }
     G4MaterialPropertiesTable* sipm_mt = new G4MaterialPropertiesTable();
+
+    std::vector<G4double> rIndex;
+    for (int i=0; i<ri_entries; i++) {
+      G4double wl = h_Planck * c_light / ri_energy[i];
+      rIndex.push_back(constTerm + squareTerm/(wl*wl) + quadTerm/pow(wl,4));
+    }
+    sipm_mt->AddProperty("RINDEX", ri_energy, rIndex);
+    
     sipm_mt->AddProperty("EFFICIENCY", energies, efficiency, entries);
     sipm_mt->AddProperty("REFLECTIVITY", energies, reflectivity, entries);
     return sipm_mt;
@@ -449,10 +470,9 @@ namespace copt {
 
     mpt->AddProperty("SCINTILLATIONCOMPONENT1", energy, emission_intensity);
 
-    G4double csi_time  =     0.5 * us;
-    // G4double csi_time_slow  =    28 * ns;
-    // CONST PROPERTIES https://www.osti.gov/servlets/purl/1514707
-    mpt->AddConstProperty("SCINTILLATIONYIELD", 50000. / MeV);
+    G4double csi_time  =     1.2 * us;
+    
+    mpt->AddConstProperty("SCINTILLATIONYIELD", 54000. / MeV);
     mpt->AddConstProperty("SCINTILLATIONYIELD1", 1. );
     // mpt->AddConstProperty("SCINTILLATIONYIELD1", 0. );
     mpt->AddConstProperty("SCINTILLATIONTIMECONSTANT1",   csi_time);

@@ -12,11 +12,13 @@
 
 #include <G4VSensitiveDetector.hh>
 #include "SensorHit.hh"
+#include "G4SystemOfUnits.hh"
 
 class G4Step;
 class G4HCofThisEvent;
 //class G4VTouchable;
 class G4TouchableHistory;
+class G4LogicalVolume;
 //class G4OpBoundaryProcess;
 
 
@@ -63,7 +65,9 @@ public:
   //G4int fSensorDepth = 0; ///< Depth of the SD in the geometry tree
   //G4int fMotherDepth = 0; ///< Depth of the SD's mother in the geometry tree
 
-  G4double fTimeBinning = 0; ///< Time bin width
+  G4LogicalVolume* fenvLV = nullptr;
+
+  G4double fTimeBinning = 100*ns; ///< Time bin width
   
 
   SensorHitsCollection* fHitsCollection = nullptr; 

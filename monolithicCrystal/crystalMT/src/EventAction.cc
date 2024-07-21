@@ -12,14 +12,15 @@
 #include <mutex>
 #include <atomic>
 
-std::mutex EventAction::sensorPosFileMutex;
+//std::mutex EventAction::sensorPosFileMutex;
 std::mutex EventAction::sensorDataFileMutex;
 std::mutex EventAction::iSensorDataFileMutex;
 
 std::ofstream EventAction::sensorDataFile("sensor_data.csv");
-std::ofstream EventAction::sensorPosFile("sensor_pos.csv");
+//std::ofstream EventAction::sensorPosFile("sensor_pos.csv");
 std::ofstream EventAction::iSensorDataFile("integrated_sensor_data.csv");
-//std::atomic<bool> EventAction::sensorPosFileWritten(false);
+std::atomic<bool> EventAction::sensorDataFileWritten(false);
+std::atomic<bool> EventAction::isensorDataFileWritten(false);
 
 
 EventAction::EventAction()
@@ -27,13 +28,25 @@ EventAction::EventAction()
 {
 
   //sensorPosFile.open(sensorPosFileName);
-  sensorPosFile << "sensor_id, sensor_x, sensor_y, sensor_z\n";
+  //sensorPosFile << "sensor_id, sensor_x, sensor_y, sensor_z\n";
+  // if (!sensorPosFileWritten.exchange(true))
+  //   {
+  //     sensorPosFile << sensor_id <<  "," << x << "," << y << "," << z <<"\n";
+  //   }
   
   //sensorDataFile.open(sensorDataFileName);
-  sensorDataFile << "event, sensor_id, time, charge\n";
+  if (!sensorDataFileWritten.exchange(true))
+    {
+       sensorDataFile << "event,sensor_id,time,charge\n";
+    }
+ 
 
   //integratedSensorDataFile.open(integratedSensorDataFileName);
-  iSensorDataFile << "event, sensor_id, amplitude\n";
+  if (!isensorDataFileWritten.exchange(true))
+    {
+         iSensorDataFile << "event,sensor_id,amplitude\n";
+    }
+
 }
 
 
@@ -58,6 +71,8 @@ void EventAction::EndOfEventAction(const G4Event* event)
   G4SDManager* sdmgr = G4SDManager::GetSDMpointer();
   G4HCtable* hct = sdmgr->GetHCtable();
 
+  //G4cout << "I have " << hct->entries() << "entries" << G4endl;
+  
    // Loop through the hits collections
   for (auto i=0; i<hct->entries(); i++) {
 
@@ -120,6 +135,8 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
       auto xyz = hit->fSensorPos;
       auto binsize = hit->fBinSize;
 
+      //G4cout << "hit =" << i << " binsize = " << binsize << G4endl; 
+
       const std::map<G4double, G4int>& wvfm = hit->GetPhotonHistogram();
       std::map<G4double, G4int>::const_iterator it;
       std::vector< std::pair<unsigned int,float> > data;
@@ -127,14 +144,16 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
 
       for (it = wvfm.begin(); it != wvfm.end(); ++it)
         {
+          //G4cout << "time =" << (*it).first << G4endl;
+          
           unsigned int time_bin = (unsigned int)((*it).first/binsize + 0.5);
           unsigned int charge = (unsigned int)((*it).second + 0.5);
 
           data.push_back(std::make_pair(time_bin, charge));
           amplitude = amplitude + (*it).second;
 
-          WriteSensorData(fEventNumber, (unsigned int)hit->fSensorID,
-                                         time_bin, charge);
+         WriteSensorData(fEventNumber, (unsigned int)hit->fSensorID,
+                         time_bin, charge);
         }
 
       WriteIntegratedSensorData(fEventNumber, (unsigned int)hit->fSensorID, amplitude);
@@ -145,8 +164,8 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
       
     if (pos_it == fSnsPosvec.end())
       {
-        WriteSensorPos((unsigned int)hit->fSensorID,
-                       (float)xyz.x(), (float)xyz.y(), (float)xyz.z());
+        //WriteSensorPos((unsigned int)hit->fSensorID,
+        //             (float)xyz.x(), (float)xyz.y(), (float)xyz.z());
         
         fSnsPosvec.push_back(hit->fSensorID);
       }
@@ -155,16 +174,16 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
 }
 
 
-void EventAction::WriteSensorPos(unsigned int sensor_id, float x, float y, float z)
-{
-  std::lock_guard<std::mutex> guard(sensorPosFileMutex);
-  sensorPosFile << sensor_id <<  "," << x << "," << y << "," << z <<"\n";
-  // if (!sensorPosFileWritten.exchange(true))
-  //   {
-  //     sensorPosFile << sensor_id <<  "," << x << "," << y << "," << z <<"\n";
-  //   }
+// void EventAction::WriteSensorPos(unsigned int sensor_id, float x, float y, float z)
+// {
+//   std::lock_guard<std::mutex> guard(sensorPosFileMutex);
+//   sensorPosFile << sensor_id <<  "," << x << "," << y << "," << z <<"\n";
+//   // if (!sensorPosFileWritten.exchange(true))
+//   //   {
+//   //     sensorPosFile << sensor_id <<  "," << x << "," << y << "," << z <<"\n";
+//   //   }
   
-}
+// }
 
 void EventAction::WriteSensorData(int64_t evt_number, unsigned int sensor_id, unsigned int time_bin, unsigned int charge)
 {

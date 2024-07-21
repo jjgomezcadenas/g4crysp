@@ -1,24 +1,26 @@
 /// \brief Implementation of the DetectorMessenger class
 
 #include "PrimaryGeneratorMessenger.hh"
-#include "PrimaryGeneratorAction.hh"
+//#include "PrimaryGeneratorAction.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
+#include "GlobalPars.hh"
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* pg)
+//PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* pg)
+PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
 {
 
   G4cout << " In constructor of PrimaryGeneratorMessenger " << G4endl;
-  fPrimaryGeneratorAction = pg;
+  //  fPrimaryGeneratorAction = pg;
   
-  fDirectory = new G4UIdirectory("/primary");
+  fDirectory = new G4UIdirectory("/primary/");
   fDirectory->SetGuidance("UI commands specific to this app.");
   
 
@@ -56,13 +58,13 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 {
 
   if( command ==  fNPhotonsCmd )
-    {fPrimaryGeneratorAction->fNphotons = fNPhotonsCmd->GetNewIntValue(newValue);}
+    {GlobalPars::Instance()->fNphotons = fNPhotonsCmd->GetNewIntValue(newValue);}
 
   if( command ==  fGaussianCmd )
-    {fPrimaryGeneratorAction->fGaussian = fGaussianCmd->GetNewBoolValue(newValue);}
+    {GlobalPars::Instance()->fGaussian = fGaussianCmd->GetNewBoolValue(newValue);}
 
   if( command ==  fFanoCmd )
-    {fPrimaryGeneratorAction->fFano = fFanoCmd->GetNewDoubleValue(newValue);}
+    {GlobalPars::Instance()->fFano = fFanoCmd->GetNewDoubleValue(newValue);}
   
 }
 

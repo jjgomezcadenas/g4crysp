@@ -7,14 +7,14 @@
 #define PrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "G4PhysicsOrderedFreeVector.hh"
+#include <G4PhysicsOrderedFreeVector.hh>
 #include "globals.hh"
 #include <fstream>
 
 class G4Event;
-class G4Box;
-class G4LogicalVolume;
 class PrimaryGeneratorMessenger;
+//class G4PhysicsFreeVector;
+//class  G4MaterialPropertyVector;
 
 /// The primary generator action class with particle gun.
 ///
@@ -30,18 +30,23 @@ public:
 
 
 public:
-  G4int fNphotons = 100;
-  G4double fFano = 1.1;
-  G4bool fGaussian = true;
-  std::ofstream fPrimGenFile;
+  //G4int fNphotons;
+  //G4double fFano;
+  //G4bool fGaussian ;
+  
+  //  std::ofstream fPrimGenFile;
     
 private:
   void ComputeCumulativeDistribution(const G4PhysicsOrderedFreeVector& pdf, G4PhysicsOrderedFreeVector& cdf);
 
 private:
-  G4int fN = 0;
-  G4Box* fEnvelopeBox = nullptr;
-  G4LogicalVolume* fenvLV = nullptr;
+  //auto fN = 0;
+  G4double fXY ;
+  G4double fZ; 
+  G4int fScintPhotons;
+  G4double fScmax;
+  G4PhysicsOrderedFreeVector* fSpectrumIntegral;
+
   PrimaryGeneratorMessenger* fMessenger = nullptr; // messenger
 };  
 

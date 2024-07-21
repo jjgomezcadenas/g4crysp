@@ -16,9 +16,9 @@
 /detector/teflonCoatings 5
 /detector/sipmXY 6 mm
 /detector/sipmZ 6 mm
-/detector/epoxyZ 2 mm
+/detector/epoxyZ 0.15 mm
 /detector/sipmActiveXY 5.9 mm
-/detector/sipmActiveZ 2 mm
+/detector/sipmActiveZ 0.01 mm
 
 
 #
@@ -32,7 +32,7 @@
 /primary/gaussian true
 /primary/fano 1.1
 
-/run/beamOn 1000
+#/run/beamOn 1000
 
 /vis/open OGL 600x600-0+0
 /vis/drawVolume
