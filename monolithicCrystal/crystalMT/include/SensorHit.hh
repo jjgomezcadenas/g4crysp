@@ -34,12 +34,12 @@ public:
   inline void* operator new(size_t);
   inline void operator delete(void*);
 
-  void SetBinSize(G4double bin_size);
+  //void SetBinSize(G4double bin_size);
   void Fill(G4double time, G4int counts=1);
   const std::map<G4double, G4int>& GetPhotonHistogram() const {return fNphotons;}
   
   G4int fSensorID = -1;          ///< Detector ID number
-  G4double fBinSize = 0;       ///< Size of time bin
+  //G4double fBinSize = 0;       ///< Size of time bin
   G4ThreeVector fSensorPos; ///< Detector position
 
   /// Sparse histogram with number of photons detected per time bin

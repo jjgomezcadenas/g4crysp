@@ -7,6 +7,7 @@
 
 class G4UIdirectory;
 class G4UIcmdWithADouble;
+class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithABool;
 
@@ -28,6 +29,7 @@ private:
 
   G4UIcmdWithAnInteger*    fNPhotonsCmd = nullptr;
   G4UIcmdWithADouble*      fFanoCmd = nullptr;
+  G4UIcmdWithADoubleAndUnit*      fTimeBinningCmd = nullptr;
   G4UIcmdWithABool*        fGaussianCmd = nullptr;
 };
 #endif 

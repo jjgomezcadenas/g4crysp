@@ -6,6 +6,7 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADouble.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
 #include "GlobalPars.hh"
@@ -39,6 +40,10 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
   fFanoCmd->SetParameterName("fano",false);
   fFanoCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fTimeBinningCmd = new G4UIcmdWithADoubleAndUnit("/primary/timeBinning",this);
+  fTimeBinningCmd->SetGuidance("Time binning");
+  fTimeBinningCmd->SetParameterName("timeBinning",false);
+  fTimeBinningCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -50,6 +55,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
   delete fNPhotonsCmd;
   delete fGaussianCmd;
   delete fFanoCmd;
+  delete fTimeBinningCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -65,6 +71,9 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 
   if( command ==  fFanoCmd )
     {GlobalPars::Instance()->fFano = fFanoCmd->GetNewDoubleValue(newValue);}
+
+  if( command ==  fTimeBinningCmd )
+    {GlobalPars::Instance()->fTimeBinning = fTimeBinningCmd->GetNewDoubleValue(newValue);}
   
 }
 

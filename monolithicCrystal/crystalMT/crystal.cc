@@ -54,6 +54,7 @@ int main(int argc,char** argv)
   G4cout << "Gaussian around scintillation average in crystal? = " << GlobalPars::Instance()->fGaussian
          << " Fano = " << GlobalPars::Instance()->fFano
          << " Average number of photons = " << GlobalPars::Instance()->fNphotons
+         << " Time Binning = " << GlobalPars::Instance()->fTimeBinning
          << G4endl; 
   
   // Physics list

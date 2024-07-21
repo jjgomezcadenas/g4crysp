@@ -67,7 +67,7 @@ public:
 
   G4LogicalVolume* fenvLV = nullptr;
 
-  G4double fTimeBinning = 100*ns; ///< Time bin width
+  //G4double fTimeBinning = 100*ns; ///< Time bin width
   
 
   SensorHitsCollection* fHitsCollection = nullptr; 
@@ -76,7 +76,7 @@ public:
 // INLINE METHODS //////////////////////////////////////////////////
 
 
-inline G4double SensorSD::GetTimeBinning() const { return fTimeBinning; }
-inline void SensorSD::SetTimeBinning(G4double tb) { fTimeBinning = tb; }
+//inline G4double SensorSD::GetTimeBinning() const { return fTimeBinning; }
+//inline void SensorSD::SetTimeBinning(G4double tb) { fTimeBinning = tb; }
 
 #endif

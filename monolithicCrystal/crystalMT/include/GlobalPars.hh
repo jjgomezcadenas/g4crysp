@@ -8,9 +8,10 @@ class GlobalPars
 public:
   static GlobalPars* Instance();
   G4String  gSDCollection ;
-  G4int fNphotons;
-  G4double fFano;
-  G4bool fGaussian ;
+  G4int     fNphotons;
+  G4double  fFano;
+  G4double  fTimeBinning;
+  G4bool    fGaussian ;
 
   
 private:

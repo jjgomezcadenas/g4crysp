@@ -89,7 +89,7 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     {
       hit = new SensorHit();
       hit->fSensorID = sensor_id;
-      hit->fBinSize =  fTimeBinning;
+      //hit->fBinSize =  fTimeBinning;
       hit->fSensorPos = touchable->GetTranslation();
       fHitsCollection->insert(hit);
     }

@@ -121,8 +121,8 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
         {
           SensorHit* hit = dynamic_cast<SensorHit*>(hits->GetHit(j));
           if (!hit) continue;
-          auto bin_size = hit->fBinSize;
-          fSensDetBin[sdname] = bin_size;
+          //auto bin_size = hit->fBinSize;
+          fSensDetBin[sdname] = GlobalPars::Instance()->fTimeBinning;;
           break;
         }
     }
@@ -133,7 +133,7 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
       if (!hit) continue;
 
       auto xyz = hit->fSensorPos;
-      auto binsize = hit->fBinSize;
+      auto binsize =  GlobalPars::Instance()->fTimeBinning;;
 
       //G4cout << "hit =" << i << " binsize = " << binsize << G4endl; 
 
