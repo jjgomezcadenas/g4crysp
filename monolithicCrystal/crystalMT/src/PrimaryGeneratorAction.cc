@@ -15,7 +15,7 @@
 #include "G4RandomDirection.hh"
 #include "PrimaryGeneratorMessenger.hh"
 #include "GlobalPars.hh"
-
+#include "HistogramManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -140,16 +140,19 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
       // Determine photon energy
       auto sc_value = G4UniformRand()*fScmax;
       auto pmod = fSpectrumIntegral->GetEnergy(sc_value);
+      auto wl = 1240.0 / (pmod/eV);
       auto px = pmod * momentum_direction.x();
       auto py = pmod * momentum_direction.y();
       auto pz = pmod * momentum_direction.z();
+
+      HistogramManager::Instance()->FillHistogram("PrimaryParticleSpectrum_nm", wl);
     
       // Create the new primary particle (an optical photon) and set it some properties
       G4PrimaryParticle* particle = new G4PrimaryParticle(particle_definition, px, py, pz);
-
+      
       G4ThreeVector polarization = G4RandomDirection();
       particle->SetPolarization(polarization);
-
+      
       // Add particle to the vertex and this to the event
       vertex->SetPrimary(particle);
     }

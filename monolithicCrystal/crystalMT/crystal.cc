@@ -15,6 +15,8 @@
 #include "Randomize.hh"
 #include "GlobalPars.hh"
 #include "PrimaryGeneratorMessenger.hh"
+#include "HistogramManager.hh"
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -40,7 +42,12 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
 
   // Set the name of the sensor hit collection (arbitrary) in globals
-    GlobalPars::Instance()->gSDCollection = "SensorHitsCollection";
+  GlobalPars::Instance()->gSDCollection = "SensorHitsCollection";
+
+  
+  // Book histograms.
+
+    HistogramManager::Instance()->CreateHistogram("PrimaryParticleSpectrum_nm", 80, 0.0, 800.0);
   
   // Detector construction
   runManager->SetUserInitialization(new DetectorConstruction());
@@ -49,13 +56,6 @@ int main(int argc,char** argv)
   // passed to globals (and thus accepted by the PrimaryGenerator constructor)
   
   PrimaryGeneratorMessenger* pgMessenger = new PrimaryGeneratorMessenger();
-
-  G4cout << "Values of Primary Generator Messenger have been set" << G4endl;
-  G4cout << "Gaussian around scintillation average in crystal? = " << GlobalPars::Instance()->fGaussian
-         << " Fano = " << GlobalPars::Instance()->fFano
-         << " Average number of photons = " << GlobalPars::Instance()->fNphotons
-         << " Time Binning = " << GlobalPars::Instance()->fTimeBinning
-         << G4endl; 
   
   // Physics list
   auto physicsList = new QBBC;
@@ -92,11 +92,10 @@ int main(int argc,char** argv)
     delete ui;
   }
 
-  // Job termination
-  // Free the store: user actions, physics_list and detector_description are
-  // owned and deleted by the run manager, so they should not be deleted
-  // in the main() program !
 
+  // Write histograms to file
+  HistogramManager::Instance()->WriteHistograms("histograms.txt");
+  
   delete visManager;
   delete runManager;
   delete pgMessenger;

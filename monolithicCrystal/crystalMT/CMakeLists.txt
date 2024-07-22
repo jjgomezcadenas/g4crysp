@@ -30,10 +30,12 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Find Apache Arrow and Parquet packages
 #find_package(Arrow REQUIRED)
 #find_package(Parquet REQUIRED)
+find_package(GSL REQUIRED)
 
 # Include Geant4's use file
 include(${Geant4_USE_FILE})
 
+include_directories(${GSL_INCLUDE_DIRS})
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
@@ -42,6 +44,9 @@ message(STATUS "G4L = ${Geant4_LIBRARIES}")
 
 add_executable(crystalApp crystal.cc ${sources} ${headers})
 target_link_libraries(crystalApp ${Geant4_LIBRARIES})
+
+# Link the executable with GSL libraries
+target_link_libraries(crystalApp ${GSL_LIBRARIES})
 
 
 # Link against Geant4, Arrow, and Parquet
