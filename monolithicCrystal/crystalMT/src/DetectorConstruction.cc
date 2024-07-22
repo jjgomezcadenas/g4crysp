@@ -21,6 +21,7 @@
 #include <G4LogicalBorderSurface.hh>
 
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction()
 {
@@ -153,15 +154,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   fTeflonSidesLogic->SetVisAttributes(G4Colour::White ());
 
   // Define back wrapping: This is a thin slab of xy dimensions equal to crytal + wrap and z dimension equal to wrap
-    
   G4Box* teflon_back = new G4Box("TEFLON_BACK",
                                  fCrystalWidth/2 + teflon_thickness_tot/2,
                                  fCrystalWidth/2 + teflon_thickness_tot/2,
                                  teflon_thickness_tot/2);
       
   auto fTeflonBackLogic   = new G4LogicalVolume(teflon_back,
-                                           G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON"),
-                                           "TEFLON_BACK");
+                                                G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON"),
+                                                "TEFLON_BACK");
+  
   fTeflonBackLogic->SetVisAttributes(G4Colour::White ());
 
   auto teflon_sides_phys = new G4PVPlacement(0, G4ThreeVector(), fTeflonSidesLogic, "TEFLON_SIDES",
@@ -176,7 +177,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   ptfe_surface->SetType(dielectric_LUT);
   ptfe_surface->SetFinish(groundteflonair);
   ptfe_surface->SetModel(LUT);
-
+  
   // G4LogicalBorderSurface defines the optical properties at the boundary between two physical volumes.
   new G4LogicalBorderSurface("CRYSTAL_PTFE", crystal_phys, teflon_sides_phys, ptfe_surface);
   new G4LogicalBorderSurface("CRYSTAL_PTFE_BACK", crystal_phys, teflon_back_phys, ptfe_surface);
@@ -186,6 +187,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Material* plastic    = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYCARBONATE");
   G4Material* silicon    = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
   G4Material* silicone   = cmat::OpticalSilicone();
+
   silicone->SetMaterialPropertiesTable(copt::OptCoupler());
   silicon->SetMaterialPropertiesTable(copt::SipmHamamatsu());
   
@@ -210,15 +212,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto epoxy_logic  = new G4LogicalVolume(epoxy_solid, silicone, "EPOXY");
   epoxy_logic->SetVisAttributes(cvis::Yellow());
 
-  G4OpticalSurface* sipm_opsurf = new G4OpticalSurface("SIPM_OPSURF", unified, polished, dielectric_metal);
-  sipm_opsurf->SetMaterialPropertiesTable(copt::SipmHamamatsu());
+  //****
 
+  // One could have defined the SiPMs as optical surfaces rather than thin volumes, but it does not seem
+  // to work, code left here for reference
+  
+  //G4OpticalSurface* sipm_opsurf = new G4OpticalSurface("SIPM_OPSURF", unified, polished, dielectric_metal);
+  //sipm_opsurf->SetMaterialPropertiesTable(copt::SipmHamamatsu());
   //new G4LogicalSkinSurface("SIPM_OPSURF", active_logic, sipm_opsurf);
+
+  //*****
 
 
   // Position the expoxy
   
-  auto activePosZ = -(fSipmZ - fEpoxyZ)/2; //
+  auto activePosZ = -(fSipmZ - fEpoxyZ)/2;
+  
   new G4PVPlacement(0, G4ThreeVector(0, 0., activePosZ), epoxy_logic,
                     "EPOXY", sipm_logic, false, 0, false);
   
@@ -234,7 +243,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                             "SiPMCase", sipm_logic, false, 0, false);
 
 
- 
   // Position the SiPMs at the exit (z >0) of the crystal and across xy
   auto xz = (fCrystalLength + fSipmZ )/2; //
     
@@ -249,18 +257,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
           auto silabel = "SiPM" + label;
           auto xr = irow * fSipmXY - fCrystalWidth/2 + fSipmXY/2;
           auto yr = icol * fSipmXY - fCrystalWidth/2 + fSipmXY/2;
-          G4cout << "Placing SiPM copy " << silabel
-                    <<" row = " << irow << " column =" << icol
-                    <<" x = " << xr 
-                    <<" y = " << yr
-                    <<" z = " << xz
-                    << G4endl;
+          // G4cout << "Placing SiPM copy " << silabel
+          //        <<" row = " << irow << " column =" << icol
+          //        <<" x = " << xr 
+          //        <<" y = " << yr
+          //        <<" z = " << xz
+          //        << G4endl;
           fSensorPosFile << icol + irow <<  "," << xr << "," << yr << "," << xz <<"\n";
          
-        
+          
           new G4PVPlacement(0, G4ThreeVector(xr, yr, xz),
                             sipm_logic, "SiPM" + label, lab_logic, true, irow * n_cols + icol);
-      }
+        }
     }
 
   return lab_phys;

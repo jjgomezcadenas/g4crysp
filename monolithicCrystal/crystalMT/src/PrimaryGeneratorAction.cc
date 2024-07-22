@@ -98,49 +98,22 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   // Here we will generate a Primary Vertex with random energy and position for each event
   // a number n of optical photons will be generated. 
   
-  // Generate an optical photon 
-  G4ParticleDefinition* particle_definition = G4OpticalPhoton::Definition();
-  
-  // if (!fenvLV) // this is the pointer to logical volume
-  // {
-  //   fenvLV = G4LogicalVolumeStore::GetInstance()->GetVolume("CRYSTAL");
-  //   if ( fenvLV ) fEnvelopeBox = dynamic_cast<G4Box*>(fenvLV->GetSolid());
-  // }
-
-  // if ( fEnvelopeBox ) {
-  //   fXY = fEnvelopeBox->GetXHalfLength() * 2;
-  //   fZ = fEnvelopeBox->GetZHalfLength() * 2;
-
+ 
+  // Create a new vertex
   auto x0 = fXY * (G4UniformRand()-0.5);
   auto y0 = fXY * (G4UniformRand()-0.5);
   auto z0 = -0.5 * fZ  * (G4UniformRand()-0.5);
   auto time = 0; // all optical photons generated here with same time.
-
   G4ThreeVector position(x0,y0,z0);
     
-  // G4Material* mat = fenvLV->GetMaterial();
-  // G4MaterialPropertiesTable* mpt = mat->GetMaterialPropertiesTable();
-
-  //   if (!mpt) {
-  //     G4Exception("[PrimaryGeneratorAction]", "GeneratePrimaries", FatalException,
-  //                 "Material properties not defined for this material!");
-  //   }
-  //   // Using fast or slow component here is irrelevant, since we're not using time
-  //   // and they're are the same in energy.
-    
-  //   G4MaterialPropertyVector* spectrum = mpt->GetProperty("SCINTILLATIONCOMPONENT1");
-
-  //   if (!spectrum) {
-  //     G4Exception("[PrimaryGeneratorAction]", "GeneratePrimaries", FatalException,
-  //                 "Scintillation component not defined for this material!");
-  //   }
-
-
-
-  // Create a new vertex
   G4PrimaryVertex* vertex = new G4PrimaryVertex(position, time);
-  auto scint_photons = 0;
+
+
+  // Depending of the value of fGaussian, generate photons with a gaussian distribution
+  // around fScintPhotons (obtained in the constructor from properties of the crystal)
+  // of generate a fixed number of photons.
   
+  auto scint_photons = 0;
   if (GlobalPars::Instance()->fGaussian)
     {
       scint_photons = G4RandGauss::shoot(fScintPhotons, sqrt(GlobalPars::Instance()->fFano * fScintPhotons));
@@ -154,7 +127,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   // G4cout << "fGaussian = " << GlobalPars::Instance()->fGaussian
   //        << " fFano =" << GlobalPars::Instance()->fFano << " scint_photons = " << scint_photons << " fNphotons "
   //        << GlobalPars::Instance()->fNphotons <<G4endl;
+
+
+  // Define optical photons
+  G4ParticleDefinition* particle_definition = G4OpticalPhoton::Definition();
   
+  // For each photon generate random direction and sample the energy from the spectrum of emission
   for ( G4int i = 0; i<scint_photons; i++)
     {
       // Generate random direction by default
@@ -165,9 +143,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
       auto px = pmod * momentum_direction.x();
       auto py = pmod * momentum_direction.y();
       auto pz = pmod * momentum_direction.z();
-
-      
-      // Create the new primary particle and set it some properties
+    
+      // Create the new primary particle (an optical photon) and set it some properties
       G4PrimaryParticle* particle = new G4PrimaryParticle(particle_definition, px, py, pz);
 
       G4ThreeVector polarization = G4RandomDirection();
@@ -186,6 +163,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 void PrimaryGeneratorAction::ComputeCumulativeDistribution(
   const G4PhysicsOrderedFreeVector& pdf, G4PhysicsOrderedFreeVector& cdf)
 {
+
+  // This is the CDF used to sample the energy 
   auto sum = 0.;
   cdf.InsertValues(pdf.Energy(0), sum);
 

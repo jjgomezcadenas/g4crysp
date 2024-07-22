@@ -89,7 +89,6 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     {
       hit = new SensorHit();
       hit->fSensorID = sensor_id;
-      //hit->fBinSize =  fTimeBinning;
       hit->fSensorPos = touchable->GetTranslation();
       fHitsCollection->insert(hit);
     }
@@ -110,15 +109,6 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
                 "Material Properties Table is not defined.");
   }
 
-
-  // std::cout << "Material Properties Table:" << std::endl;
-  
-  // const std::vector<G4String>& constPropertyNames = mpt->GetMaterialConstPropertyNames();
-  // std::cout << "Constant Property Names:" << std::endl;
-  // for (const auto& name : constPropertyNames) {
-  //     std::cout << "  " << name << std::endl;
-  // }
-  
 
   // Sample random time using exponential distribution
   auto timeConstant = mpt->GetConstProperty("SCINTILLATIONTIMECONSTANT1");
@@ -142,11 +132,6 @@ G4int SensorSD::FindSensorID(const G4VTouchable* touchable)
   //std::cout << "sensor id = " << sensorid << " motherid =" << motherid << std::endl;
   sensorid = motherid + sensorid; //sensorid =0 always in this example, but keep like this for clarity
   
-  // auto sensorid = touchable->GetCopyNumber(0);
-  // if (fNamingOrder != 0) {
-  //   auto  motherid = touchable->GetCopyNumber(fMotherDepth);
-  //   sensorid = fNamingOrder * motherid + sensorid;
-  // }
   return sensorid;
 }
 
