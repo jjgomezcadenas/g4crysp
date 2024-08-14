@@ -1,4 +1,3 @@
-// DetectorMessenger.hh
 #ifndef Primary_Messenger_h
 #define Primary_Messenger_h 1
 
@@ -27,9 +26,9 @@ private:
   //PrimaryGeneratorAction*  fPrimaryGeneratorAction = nullptr;
   G4UIdirectory*           fDirectory = nullptr;
 
-  G4UIcmdWithAnInteger*    fNPhotonsCmd = nullptr;
-  G4UIcmdWithADouble*      fFanoCmd = nullptr;
-  G4UIcmdWithADoubleAndUnit*      fTimeBinningCmd = nullptr;
-  G4UIcmdWithABool*        fGaussianCmd = nullptr;
+  G4UIcmdWithAnInteger*       fNPhotonsCmd = nullptr;
+  G4UIcmdWithADouble*         fFanoCmd = nullptr;
+  G4UIcmdWithADoubleAndUnit*  fTimeBinningCmd = nullptr;
+  G4UIcmdWithABool*           fGaussianCmd = nullptr;
 };
 #endif 

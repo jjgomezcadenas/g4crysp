@@ -24,7 +24,6 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
   fDirectory = new G4UIdirectory("/primary/");
   fDirectory->SetGuidance("UI commands specific to this app.");
   
-
   fNPhotonsCmd = new G4UIcmdWithAnInteger("/primary/nphotons",this);
   fNPhotonsCmd->SetGuidance("Define the number of photons");
   fNPhotonsCmd->SetParameterName("nphotons",false);

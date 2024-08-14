@@ -6,7 +6,7 @@
 #include "G4SystemOfUnits.hh"
 #include "GlobalPars.hh"
 #include "SensorSD.hh"
-
+#include "HistogramManager.hh"
 #include <iostream>
 #include <fstream>
 #include <mutex>
@@ -16,27 +16,27 @@
 std::mutex EventAction::sensorDataFileMutex;
 std::mutex EventAction::iSensorDataFileMutex;
 
-std::ofstream EventAction::sensorDataFile("sensor_data.csv");
-std::ofstream EventAction::iSensorDataFile("integrated_sensor_data.csv");
+//std::ofstream EventAction::sensorDataFile(GlobalPars::Instance()->fSdf);
+//std::ofstream EventAction::iSensorDataFile(GlobalPars::Instance()->fIsdf);
 
-std::atomic<bool> EventAction::sensorDataFileWritten(false);
-std::atomic<bool> EventAction::isensorDataFileWritten(false);
+//std::atomic<bool> EventAction::sensorDataFileWritten(false);
+//std::atomic<bool> EventAction::isensorDataFileWritten(false);
 
 
 EventAction::EventAction()
     : G4UserEventAction()
 {
 
-  if (!sensorDataFileWritten.exchange(true))
-    {
-       sensorDataFile << "event,sensor_id,time,charge\n";
-    }
+  // if (!sensorDataFileWritten.exchange(true))
+  //   {
+  //     *(GlobalPars::Instance()->sensorDataFile) << "event,sensor_id,time,charge\n";
+  //   }
  
 
-  if (!isensorDataFileWritten.exchange(true))
-    {
-         iSensorDataFile << "event,sensor_id,amplitude\n";
-    }
+  // if (!isensorDataFileWritten.exchange(true))
+  //   {
+  //     *(GlobalPars::Instance()->iSensorDataFile) << "event,sensor_id,amplitude\n";
+  //   }
 
 }
 
@@ -112,6 +112,8 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
         }
     }
 
+  auto totalEnergy = 0.0;
+  auto totalEnergyTime = 0.0;
   for (auto i=0; i<hits->entries(); i++)
     {
       SensorHit* hit = dynamic_cast<SensorHit*>(hits->GetHit(i));
@@ -120,10 +122,10 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
       auto xyz = hit->fSensorPos;
       auto binsize =  GlobalPars::Instance()->fTimeBinning;;
 
-
       const std::map<G4double, G4int>& wvfm = hit->GetPhotonHistogram();
       std::map<G4double, G4int>::const_iterator it;
       G4double amplitude = 0.;
+      G4double amplitudeTime = 0.;
 
       for (it = wvfm.begin(); it != wvfm.end(); ++it)
         {
@@ -133,13 +135,25 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
 
           amplitude = amplitude + (*it).second;
 
+          if (time_bin <= binsize){
+            amplitudeTime = amplitude;
+          }
+
+
          WriteSensorData(fEventNumber, (unsigned int)hit->fSensorID,
                          time_bin, charge);
         }
 
+
       WriteIntegratedSensorData(fEventNumber, (unsigned int)hit->fSensorID, amplitude);
-    
-    }        
+
+      totalEnergy += amplitude;
+      totalEnergyTime += amplitudeTime;
+
+      HistogramManager::Instance()->FillHistogram("TotalEnergy", totalEnergy);
+      HistogramManager::Instance()->FillHistogram("TotalEnergyTime", totalEnergyTime);
+    }
+  
 }
 
 
@@ -149,7 +163,7 @@ void EventAction::WriteSensorData(int64_t evt_number, unsigned int sensor_id, un
   std::lock_guard<std::mutex> guard(sensorDataFileMutex);
   // Write event data to the first file
 
-  sensorDataFile << evt_number << "," << sensor_id << "," << time_bin << "," << charge <<"\n";
+  GlobalPars::Instance()->sensorDataFile << evt_number << "," << sensor_id << "," << time_bin << "," << charge <<"\n";
 }
 
 
@@ -157,5 +171,5 @@ void EventAction::WriteIntegratedSensorData(int64_t evt_number, unsigned int sen
 {
   std::lock_guard<std::mutex> guard(iSensorDataFileMutex);
 
-    iSensorDataFile << evt_number << "," << sensor_id << "," << amplitude <<"\n";
+  GlobalPars::Instance()->iSensorDataFile << evt_number << "," << sensor_id << "," << amplitude <<"\n";
 }

@@ -13,8 +13,6 @@
 
 class G4Event;
 class PrimaryGeneratorMessenger;
-//class G4PhysicsFreeVector;
-//class  G4MaterialPropertyVector;
 
 /// The primary generator action class with particle gun.
 ///
@@ -30,11 +28,6 @@ public:
 
 
 public:
-  //G4int fNphotons;
-  //G4double fFano;
-  //G4bool fGaussian ;
-  
-  //  std::ofstream fPrimGenFile;
     
 private:
   void ComputeCumulativeDistribution(const G4PhysicsOrderedFreeVector& pdf, G4PhysicsOrderedFreeVector& cdf);

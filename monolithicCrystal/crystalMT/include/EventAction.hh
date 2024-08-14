@@ -26,8 +26,8 @@ public:
 
   G4int fEventNumber;
     
-  static std::ofstream sensorDataFile;
-  static std::ofstream iSensorDataFile;
+  //static std::ofstream sensorDataFile;
+  //static std::ofstream iSensorDataFile;
 
   static std::mutex sensorDataFileMutex;
   static std::mutex iSensorDataFileMutex;

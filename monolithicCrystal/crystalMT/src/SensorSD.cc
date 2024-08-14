@@ -24,6 +24,7 @@
 #include "Randomize.hh"
 #include "G4MaterialPropertiesTable.hh"
 #include "G4MaterialPropertyVector.hh"
+#include "HistogramManager.hh"
 #include <iostream>
 
 SensorSD::SensorSD(G4String sdname): G4VSensitiveDetector(sdname)  
@@ -114,6 +115,8 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   auto timeConstant = mpt->GetConstProperty("SCINTILLATIONTIMECONSTANT1");
   auto decayTime = -timeConstant * std::log(G4UniformRand());
   auto time = gtime + decayTime; // decay time + propagation time
+
+  HistogramManager::Instance()->FillHistogram("DecayTime", time);
 
   //G4cout << " SensorSD::ProcessHits:: time (ns)= " << time/ns <<  " wl (nm) = " << wl <<  G4endl; 
   hit->Fill(time);

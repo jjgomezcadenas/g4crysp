@@ -123,11 +123,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
       scint_photons = GlobalPars::Instance()->fNphotons;
     }
 
-
-  // G4cout << "fGaussian = " << GlobalPars::Instance()->fGaussian
-  //        << " fFano =" << GlobalPars::Instance()->fFano << " scint_photons = " << scint_photons << " fNphotons "
-  //        << GlobalPars::Instance()->fNphotons <<G4endl;
-
+  HistogramManager::Instance()->FillHistogram("Yield", scint_photons);
 
   // Define optical photons
   G4ParticleDefinition* particle_definition = G4OpticalPhoton::Definition();
