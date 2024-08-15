@@ -27,17 +27,6 @@ EventAction::EventAction()
     : G4UserEventAction()
 {
 
-  // if (!sensorDataFileWritten.exchange(true))
-  //   {
-  //     *(GlobalPars::Instance()->sensorDataFile) << "event,sensor_id,time,charge\n";
-  //   }
- 
-
-  // if (!isensorDataFileWritten.exchange(true))
-  //   {
-  //     *(GlobalPars::Instance()->iSensorDataFile) << "event,sensor_id,amplitude\n";
-  //   }
-
 }
 
 

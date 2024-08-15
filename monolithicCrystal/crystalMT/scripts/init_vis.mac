@@ -1,0 +1,61 @@
+# Set some default verbose
+/control/verbose 1
+/control/saveHistory
+/run/verbose 1
+#
+# Change the default number of threads (in multi-threaded mode)
+/run/numberOfThreads 1
+
+
+# User defined pars
+
+/detector/crystalMaterial CsITl
+/detector/crystalWidth 48 mm
+/detector/crystalX0Length 2
+/detector/teflonThickness 0.08 mm
+/detector/teflonCoatings 5
+/detector/sipmXY 6 mm
+/detector/sipmZ 1 mm
+/detector/epoxyZ 0.15 mm
+/detector/sipmActiveXY 5.9 mm
+/detector/sipmActiveZ 0.01 mm
+
+# Primary generator
+# if gaussian is false, then nphotons are generated
+# if gaussian is true, then Gauss::(fScintPhotons, sqrt(fFano * fScintPhotons)
+# That is a gaussian distribution around the average number of scint phot for the material
+# corrrected by Fano. 
+
+/primary/nphotons 300
+/primary/gaussian false
+/primary/fano 1.1
+/primary/fano 1.1
+/primary/timeBinning 50 ns
+
+
+#
+# Initialize kernel
+
+/run/initialize
+
+
+###/run/beamOn 1000
+
+/vis/open OGL 600x600-0+0
+/vis/viewer/set/autoRefresh false
+/vis/drawVolume
+#/vis/viewer/set/viewpointThetaPhi 90 180
+/vis/scene/add/axes 0 0 0 10 cm
+/vis/viewer/set/viewpointVector -1 0 0
+#/vis/viewer/set/lightsVector -1 0 0
+#
+# Specify style (surface, wireframe, auxiliary edges,...)
+#/vis/viewer/set/style surface
+/vis/viewer/set/auxiliaryEdge true
+#/vis/viewer/set/lineSegmentsPerCircle 100
+###/vis/sceneHandler/attach
+
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+
+

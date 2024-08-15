@@ -132,10 +132,10 @@ int main(int argc,char** argv)
 void book_histograms()
 {
   HistogramManager::Instance()->CreateHistogram("PrimaryParticleSpectrum_nm", 80, 0.0, 800.0);
-  HistogramManager::Instance()->CreateHistogram("Yield", 50, 40e+3, 60e+3);
+  HistogramManager::Instance()->CreateHistogram("Yield", 50, 50e+3, 55e+3);
   HistogramManager::Instance()->CreateHistogram("DecayTime", 50, 0.0, 5e+3);
-  HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 45e+3, 55e+3);
-  HistogramManager::Instance()->CreateHistogram("TotalEnergyTime", 50, 40e+3, 60e+3);
+  HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 0.0, 10e+3);
+  HistogramManager::Instance()->CreateHistogram("TotalEnergyTime", 50, 0.0, 10e+3);
 }
 
 void set_output_files()
