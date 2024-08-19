@@ -22,7 +22,7 @@
 #include <mutex>
 
 
-std::mutex PrimaryGeneratorAction::gammaIntFileMutex;
+//std::mutex PrimaryGeneratorAction::gammaIntFileMutex;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -163,7 +163,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 
   auto evt_number = event->GetEventID();
 
-  std::lock_guard<std::mutex> guard(gammaIntFileMutex);
+  std::lock_guard<std::mutex> guard(GlobalPars::Instance()->gammaIntFileMutex);
   GlobalPars::Instance()->gammaIntFile << evt_number << "," << 
     x0 << ","  << y0 << "," << z0 <<"\n";
 

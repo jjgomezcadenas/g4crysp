@@ -41,7 +41,7 @@ private:
   G4double fScmax;
   G4PhysicsOrderedFreeVector* fSpectrumIntegral;
 
-  static std::mutex gammaIntFileMutex;
+  //static std::mutex gammaIntFileMutex;
 
   PrimaryGeneratorMessenger* fMessenger = nullptr; // messenger
 };  

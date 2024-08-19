@@ -13,8 +13,8 @@
 #include <atomic>
 
 
-std::mutex EventAction::sensorDataFileMutex;
-std::mutex EventAction::iSensorDataFileMutex;
+// std::mutex EventAction::sensorDataFileMutex;
+// std::mutex EventAction::iSensorDataFileMutex;
 
 //std::ofstream EventAction::sensorDataFile(GlobalPars::Instance()->fSdf);
 //std::ofstream EventAction::iSensorDataFile(GlobalPars::Instance()->fIsdf);
@@ -148,7 +148,7 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
 void EventAction::WriteSensorData(int64_t evt_number, unsigned int sensor_id, unsigned int time_bin, unsigned int charge)
 {
 
-  std::lock_guard<std::mutex> guard(sensorDataFileMutex);
+  std::lock_guard<std::mutex> guard(GlobalPars::Instance()->sensorDataFileMutex);
   // Write event data to the first file
 
   GlobalPars::Instance()->sensorDataFile << evt_number << "," << sensor_id << "," << time_bin << "," << charge <<"\n";
@@ -157,7 +157,7 @@ void EventAction::WriteSensorData(int64_t evt_number, unsigned int sensor_id, un
 
 void EventAction::WriteIntegratedSensorData(int64_t evt_number, unsigned int sensor_id, double amplitude)
 {
-  std::lock_guard<std::mutex> guard(iSensorDataFileMutex);
+  std::lock_guard<std::mutex> guard(GlobalPars::Instance()->iSensorDataFileMutex);
 
   GlobalPars::Instance()->iSensorDataFile << evt_number << "," << sensor_id << "," << amplitude <<"\n";
 }

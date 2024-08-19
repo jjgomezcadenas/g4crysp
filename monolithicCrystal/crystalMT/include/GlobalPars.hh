@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <mutex>
 
 class GlobalPars
 {
@@ -21,7 +22,9 @@ public:
   std::ofstream iSensorDataFile;
   std::ofstream gammaIntFile;
 
-
+  std::mutex sensorDataFileMutex;
+  std::mutex iSensorDataFileMutex;
+  std::mutex gammaIntFileMutex;
   
 private:
     GlobalPars();
