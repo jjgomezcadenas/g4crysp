@@ -144,9 +144,9 @@ void set_output_files()
   int seedL4D = GlobalPars::Instance()->fSeed % 10000;
   std::string l4d = std::to_string(seedL4D);
 
-  std::string sdf = "sensor_data_" + l4d + ".csv";
-  std::string isdf = "integrated_sensor_data_" + l4d + ".csv";
-  std::string gint = "gamma_interactions_" + l4d + ".csv";
+  std::string sdf = GlobalPars::Instance()->fSensorDataFileName + l4d + ".csv";
+  std::string isdf = GlobalPars::Instance()->fISensorDataFileName + l4d + ".csv";
+  std::string gint = GlobalPars::Instance()->fGammaDataFileName + l4d + ".csv";
 
   GlobalPars::Instance()->sensorDataFile.open(sdf);
   GlobalPars::Instance()->iSensorDataFile.open(isdf);
@@ -163,7 +163,7 @@ std::string set_histo_filename()
   int seedL4D = GlobalPars::Instance()->fSeed % 10000;
   std::string l4d = std::to_string(seedL4D);
 
-  return "histograms_" + l4d + ".txt";
+  return GlobalPars::Instance()->fHistoFileName + l4d + ".txt";
 
 }
   

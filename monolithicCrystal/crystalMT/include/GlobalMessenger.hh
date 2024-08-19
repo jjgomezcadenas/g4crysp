@@ -7,8 +7,7 @@
 
 class G4UIdirectory;
 class G4UIcmdWithAnInteger;
-
-
+class G4UIcmdWithAString;
 
 class GlobalMessenger : public G4UImessenger {
 public:
@@ -22,5 +21,10 @@ private:
 
   G4UIdirectory*           fDirectory = nullptr;
   G4UIcmdWithAnInteger*    fSeedCmd = nullptr;
+  G4UIcmdWithAString*      fSensorDataCmd = nullptr;
+  G4UIcmdWithAString*      fISensorDataCmd = nullptr;
+  G4UIcmdWithAString*      fGammaDataCmd = nullptr;
+  G4UIcmdWithAString*      fHistosCmd = nullptr;
+
 };
 #endif 

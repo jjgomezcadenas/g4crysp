@@ -48,4 +48,4 @@
 
 
 # number of events to generate
-/run/beamOn 100
+/run/beamOn 10

@@ -18,6 +18,11 @@ public:
   G4double  fTimeBinning;
   G4bool    fGaussian ;
 
+  std::string fSensorDataFileName;
+  std::string fISensorDataFileName;
+  std::string fGammaDataFileName;
+  std::string fHistoFileName;
+  
   std::ofstream sensorDataFile;
   std::ofstream iSensorDataFile;
   std::ofstream gammaIntFile;
