@@ -32,8 +32,8 @@ public:
   static std::mutex sensorDataFileMutex;
   static std::mutex iSensorDataFileMutex;
   
-  static std::atomic<bool> sensorDataFileWritten;
-  static std::atomic<bool> isensorDataFileWritten;
+  //static std::atomic<bool> sensorDataFileWritten;
+  //static std::atomic<bool> isensorDataFileWritten;
     
   std::map<G4String, G4double>  fSensDetBin;
 

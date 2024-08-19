@@ -19,6 +19,7 @@ public:
 
   std::ofstream sensorDataFile;
   std::ofstream iSensorDataFile;
+  std::ofstream gammaIntFile;
 
 
   

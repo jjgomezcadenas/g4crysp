@@ -10,6 +10,7 @@
 #include <G4PhysicsOrderedFreeVector.hh>
 #include "globals.hh"
 #include <fstream>
+#include <mutex>
 
 class G4Event;
 class PrimaryGeneratorMessenger;
@@ -39,6 +40,8 @@ private:
   G4int fScintPhotons;
   G4double fScmax;
   G4PhysicsOrderedFreeVector* fSpectrumIntegral;
+
+  static std::mutex gammaIntFileMutex;
 
   PrimaryGeneratorMessenger* fMessenger = nullptr; // messenger
 };  

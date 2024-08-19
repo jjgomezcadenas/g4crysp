@@ -17,6 +17,13 @@
 #include "GlobalPars.hh"
 #include "HistogramManager.hh"
 
+#include <iostream>
+#include <fstream>
+#include <mutex>
+
+
+std::mutex PrimaryGeneratorAction::gammaIntFileMutex;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
@@ -153,6 +160,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
       vertex->SetPrimary(particle);
     }
   event->AddPrimaryVertex(vertex);
+
+  auto evt_number = event->GetEventID();
+
+  std::lock_guard<std::mutex> guard(gammaIntFileMutex);
+  GlobalPars::Instance()->gammaIntFile << evt_number << "," << 
+    x0 << ","  << y0 << "," << z0 <<"\n";
 
 }
 

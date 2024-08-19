@@ -26,7 +26,6 @@ std::mutex EventAction::iSensorDataFileMutex;
 EventAction::EventAction()
     : G4UserEventAction()
 {
-
 }
 
 

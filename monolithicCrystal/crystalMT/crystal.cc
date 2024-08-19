@@ -121,6 +121,7 @@ int main(int argc,char** argv)
   // close files
   GlobalPars::Instance()->sensorDataFile.close();
   GlobalPars::Instance()->iSensorDataFile.close();
+  GlobalPars::Instance()->gammaIntFile.close();
 
   delete visManager;
   delete runManager;
@@ -145,12 +146,15 @@ void set_output_files()
 
   std::string sdf = "sensor_data_" + l4d + ".csv";
   std::string isdf = "integrated_sensor_data_" + l4d + ".csv";
+  std::string gint = "gamma_interactions_" + l4d + ".csv";
 
   GlobalPars::Instance()->sensorDataFile.open(sdf);
   GlobalPars::Instance()->iSensorDataFile.open(isdf);
+  GlobalPars::Instance()->gammaIntFile.open(gint);
 
   GlobalPars::Instance()->sensorDataFile << "event,sensor_id,time,charge\n";
   GlobalPars::Instance()->iSensorDataFile << "event,sensor_id,amplitude\n";
+  GlobalPars::Instance()->gammaIntFile << "event,x, y, z\n";
 
 }
 
