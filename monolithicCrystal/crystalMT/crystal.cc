@@ -33,10 +33,28 @@ int main(int argc,char** argv)
   // Get the pointer to the User Interface manager
   auto UImanager = G4UImanager::GetUIpointer();
 
+  G4UIExecutive* ui = nullptr;
+
+  G4cout << "argc = " << argc << " argv ="<< argv << G4endl;
+
+  if ( argc == 1 ) { 
+    ui = new G4UIExecutive(argc,argv); 
+    }
+  else if (argc ==3){
+    // batch mode
+    G4String command = "/control/execute ";
+    G4String fileName = argv[1];
+    UImanager->ApplyCommand(command+fileName);
+    //UImanager->ApplyCommand("/control/execute init_global.mac");
+    }
+  else
+    {
+      G4cout << "Wrong arguments. Call is <./crystalMT globals.mac run.mac>" << G4endl;
+     return 1;
+    }
+  //UImanager->ApplyCommand("/control/execute init_global.mac");
   // Get globals 
   GlobalMessenger* gMessenger = new GlobalMessenger();
-
-  UImanager->ApplyCommand("/control/execute init_global.mac");
 
   // set the random seed
   G4cout << "Random seed set to: " << GlobalPars::Instance()->fSeed
@@ -60,8 +78,8 @@ int main(int argc,char** argv)
 
   // Detect interactive mode (if no arguments) and define UI session
   
-  G4UIExecutive* ui = nullptr;
-  if ( argc == 1 ) { ui = new G4UIExecutive(argc, argv); }
+  //G4UIExecutive* ui = nullptr;
+  //if ( argc == 1 ) { ui = new G4UIExecutive(argc, argv); }
   
   // Optionally: choose a different Random engine...
   // G4Random::setTheEngine(new CLHEP::MTwistEngine);
@@ -106,7 +124,7 @@ int main(int argc,char** argv)
   if ( ! ui ) {
     // batch mode
     G4String command = "/control/execute ";
-    G4String fileName = argv[1];
+    G4String fileName = argv[2];
     UImanager->ApplyCommand(command+fileName);
   }
   else {
