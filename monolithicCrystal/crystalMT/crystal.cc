@@ -30,17 +30,19 @@ std::string set_histo_filename();
 
 int main(int argc,char** argv)
 {
+   // Get globals 
+  GlobalMessenger* gMessenger = new GlobalMessenger();
+
   // Get the pointer to the User Interface manager
   auto UImanager = G4UImanager::GetUIpointer();
 
   G4UIExecutive* ui = nullptr;
 
-  G4cout << "argc = " << argc << " argv ="<< argv << G4endl;
-
+  
   if ( argc == 1 ) { 
-    ui = new G4UIExecutive(argc,argv); 
+    ui = new G4UIExecutive(argc,argv); // call the UIExecutive only if no parameters
     }
-  else if (argc ==3){
+  else if (argc ==3){ // need to init files
     // batch mode
     G4String command = "/control/execute ";
     G4String fileName = argv[1];
@@ -49,12 +51,12 @@ int main(int argc,char** argv)
     }
   else
     {
-      G4cout << "Wrong arguments. Call is <./crystalMT globals.mac run.mac>" << G4endl;
+      G4cout << "Wrong arguments. Call is <./crystalMT init_global.mac run.mac>" << G4endl;
      return 1;
     }
   //UImanager->ApplyCommand("/control/execute init_global.mac");
-  // Get globals 
-  GlobalMessenger* gMessenger = new GlobalMessenger();
+ 
+  
 
   // set the random seed
   G4cout << "Random seed set to: " << GlobalPars::Instance()->fSeed
@@ -122,7 +124,7 @@ int main(int argc,char** argv)
 
 
   if ( ! ui ) {
-    // batch mode
+    // batch mode, now init with run.mac params
     G4String command = "/control/execute ";
     G4String fileName = argv[2];
     UImanager->ApplyCommand(command+fileName);
