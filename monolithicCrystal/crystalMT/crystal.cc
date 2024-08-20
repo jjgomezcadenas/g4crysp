@@ -98,7 +98,8 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new ActionInitialization);
 
   // Initialize visualization with the default graphics system
-  auto visManager = new G4VisExecutive(argc, argv);
+  //auto visManager = new G4VisExecutive(argc, argv);
+  auto visManager = new G4VisExecutive;
   visManager->Initialize();
 
 
