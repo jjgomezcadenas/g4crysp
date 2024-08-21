@@ -1,4 +1,5 @@
-/globalpars/seed 12340003 # change the seed for multiple runs to 0002, 0003 etc.
+/globalpars/seed 12340002 # change the seed for multiple runs to 0002, 0003 etc.
+/globalpars/idataonly true
 /globalpars/SensorDataFileName sensor_data_ 
 /globalpars/ISensorDataFileName isensor_data_ 
 /globalpars/GammaInteractionsFileName gamma_interactions_

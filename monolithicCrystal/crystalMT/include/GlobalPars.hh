@@ -17,6 +17,7 @@ public:
   G4double  fFano;
   G4double  fTimeBinning;
   G4bool    fGaussian ;
+  G4int fNumberOfEvents;
 
   std::string fSensorDataFileName;
   std::string fISensorDataFileName;
@@ -30,6 +31,8 @@ public:
   std::mutex sensorDataFileMutex;
   std::mutex iSensorDataFileMutex;
   std::mutex gammaIntFileMutex;
+
+  bool fIDataOnly;
   
 private:
     GlobalPars();

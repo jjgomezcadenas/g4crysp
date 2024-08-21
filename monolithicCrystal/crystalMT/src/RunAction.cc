@@ -1,7 +1,7 @@
 #include "RunAction.hh"
-
 #include "G4Run.hh"
 #include "G4RunManager.hh"
+#include "GlobalPars.hh"
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -14,10 +14,11 @@ RunAction::RunAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void RunAction::BeginOfRunAction(const G4Run*)
+void RunAction::BeginOfRunAction(const G4Run* run)
 {
   //inform the runManager to save random number seed
   G4RunManager::GetRunManager()->SetRandomNumberStore(false);
+  GlobalPars::Instance()->fNumberOfEvents = run->GetNumberOfEventToBeProcessed();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

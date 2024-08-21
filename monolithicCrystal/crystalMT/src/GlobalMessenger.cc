@@ -4,6 +4,7 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithABool.hh"
 #include "GlobalPars.hh"
 
 
@@ -42,6 +43,11 @@ GlobalMessenger::GlobalMessenger()
   fHistosCmd->SetParameterName("controlHistograms",false);
   fHistosCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fIDataOnlyCmd = new G4UIcmdWithABool("/globalpars/idataonly",this);
+  fIDataOnlyCmd->SetGuidance("If true writes integrated data only");
+  fIDataOnlyCmd->SetParameterName("idataonly",false);
+  fIDataOnlyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -54,6 +60,7 @@ GlobalMessenger::~GlobalMessenger()
   delete fISensorDataCmd ;
   delete fGammaDataCmd ;
   delete fHistosCmd;
+  delete fIDataOnlyCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -89,6 +96,12 @@ void GlobalMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       G4cout << " Got new value for histograms files = " << newValue << G4endl;
       GlobalPars::Instance()->fHistoFileName = newValue;
     }
+
+    if( command ==  fIDataOnlyCmd )
+    { 
+      GlobalPars::Instance()->fIDataOnly = fIDataOnlyCmd->GetNewBoolValue(newValue);
+    } 
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

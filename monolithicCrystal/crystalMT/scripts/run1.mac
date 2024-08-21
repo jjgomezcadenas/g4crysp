@@ -6,7 +6,7 @@
 #/globals/seed 12340001 # change the seed for multiple runs to 0002, 0003 etc.
 
 # Will run the default, e.g, 8 threads. 
-/run/numberOfThreads 8
+/run/numberOfThreads 1
 
 #
 # Set some default verbose

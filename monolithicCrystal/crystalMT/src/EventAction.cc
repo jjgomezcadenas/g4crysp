@@ -36,7 +36,9 @@ EventAction::~EventAction()
 
 void EventAction::BeginOfEventAction(const G4Event* event)
 {
-  fEventNumber = event->GetEventID();
+  int seedL4D = GlobalPars::Instance()->fSeed % 10000;
+  G4int eventShift = (seedL4D -1) * GlobalPars::Instance()->fNumberOfEvents;
+  fEventNumber = event->GetEventID() + eventShift;
 }
 
 
@@ -129,9 +131,10 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
             amplitudeTime = amplitude;
           }
 
-
+         if (GlobalPars::Instance()->fIDataOnly == false){
          WriteSensorData(fEventNumber, (unsigned int)hit->fSensorID,
                          time_bin, charge);
+         }
         }
 
       WriteIntegratedSensorData(fEventNumber, (unsigned int)hit->fSensorID, 

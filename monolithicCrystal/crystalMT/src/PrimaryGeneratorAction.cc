@@ -161,7 +161,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     }
   event->AddPrimaryVertex(vertex);
 
-  auto evt_number = event->GetEventID();
+  int seedL4D = GlobalPars::Instance()->fSeed % 10000;
+  G4int eventShift = (seedL4D -1) * GlobalPars::Instance()->fNumberOfEvents;
+  auto evt_number = event->GetEventID() + eventShift;
 
   std::lock_guard<std::mutex> guard(GlobalPars::Instance()->gammaIntFileMutex);
   GlobalPars::Instance()->gammaIntFile << evt_number << "," << 

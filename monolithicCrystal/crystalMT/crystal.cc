@@ -140,7 +140,10 @@ int main(int argc,char** argv)
   HistogramManager::Instance()->WriteHistograms(hfn);
 
   // close files
+  if (GlobalPars::Instance()->fIDataOnly == false){
   GlobalPars::Instance()->sensorDataFile.close();
+  }
+  
   GlobalPars::Instance()->iSensorDataFile.close();
   GlobalPars::Instance()->gammaIntFile.close();
 
@@ -172,11 +175,13 @@ void set_output_files()
   std::string isdf = GlobalPars::Instance()->fISensorDataFileName + l4d + ".csv";
   std::string gint = GlobalPars::Instance()->fGammaDataFileName + l4d + ".csv";
 
-  GlobalPars::Instance()->sensorDataFile.open(sdf);
+  if (GlobalPars::Instance()->fIDataOnly == false){
+    GlobalPars::Instance()->sensorDataFile.open(sdf);
+    GlobalPars::Instance()->sensorDataFile << "event,sensor_id,time,charge\n";
+  }
+
   GlobalPars::Instance()->iSensorDataFile.open(isdf);
   GlobalPars::Instance()->gammaIntFile.open(gint);
-
-  GlobalPars::Instance()->sensorDataFile << "event,sensor_id,time,charge\n";
   GlobalPars::Instance()->iSensorDataFile << "event,sensor_id,amplitude\n";
   GlobalPars::Instance()->gammaIntFile << "event,x, y, z\n";
 
