@@ -106,24 +106,26 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
     {
       SensorHit* hit = dynamic_cast<SensorHit*>(hits->GetHit(i));
       if (!hit) continue;
-
       auto xyz = hit->fSensorPos;
-      auto binsize =  GlobalPars::Instance()->fTimeBinning;;
+      //auto binsize =  GlobalPars::Instance()->fTimeBinning;;
 
-      const std::map<G4double, G4int>& wvfm = hit->GetPhotonHistogram();
+      const std::map<G4double, G4int> wvfm = hit->fNphotons;
       std::map<G4double, G4int>::const_iterator it;
       G4double amplitude = 0.;
       G4double amplitudeTime = 0.;
 
       for (it = wvfm.begin(); it != wvfm.end(); ++it)
         {
-          
-          unsigned int time_bin = (unsigned int)((*it).first/binsize + 0.5);
+          unsigned int time_bin = (unsigned int)((*it).first + 0.5);
           unsigned int charge = (unsigned int)((*it).second + 0.5);
+
+          HistogramManager::Instance()->FillHistogram("TimeBin2", 
+          time_bin, charge);
+          HistogramManager::Instance()->FillHistogram("Charge", charge);
 
           amplitude = amplitude + (*it).second;
 
-          if (time_bin <= binsize){
+          if (time_bin <= 1){ // amplitude in first bin 
             amplitudeTime = amplitude;
           }
 
@@ -132,16 +134,17 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
                          time_bin, charge);
         }
 
-
-      WriteIntegratedSensorData(fEventNumber, (unsigned int)hit->fSensorID, amplitude);
+      WriteIntegratedSensorData(fEventNumber, (unsigned int)hit->fSensorID, 
+                                amplitude);
 
       totalEnergy += amplitude;
       totalEnergyTime += amplitudeTime;
-
-      HistogramManager::Instance()->FillHistogram("TotalEnergy", totalEnergy);
-      HistogramManager::Instance()->FillHistogram("TotalEnergyTime", totalEnergyTime);
+    
     }
-  
+  HistogramManager::Instance()->FillHistogram("TotalEnergy", 
+                                                    totalEnergy);
+  HistogramManager::Instance()->FillHistogram("TotalEnergyTime", 
+                                                    totalEnergyTime);
 }
 
 

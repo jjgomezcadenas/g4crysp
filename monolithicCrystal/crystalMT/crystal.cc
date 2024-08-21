@@ -156,8 +156,11 @@ void book_histograms()
   HistogramManager::Instance()->CreateHistogram("PrimaryParticleSpectrum_nm", 80, 0.0, 800.0);
   HistogramManager::Instance()->CreateHistogram("Yield", 50, 50e+3, 55e+3);
   HistogramManager::Instance()->CreateHistogram("DecayTime", 50, 0.0, 5e+3);
-  HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 0.0, 10e+3);
-  HistogramManager::Instance()->CreateHistogram("TotalEnergyTime", 50, 0.0, 10e+3);
+  HistogramManager::Instance()->CreateHistogram("TimeBin", 50, 0.0, 25.0);
+  HistogramManager::Instance()->CreateHistogram("TimeBin2", 50, 0.0, 25.0);
+  HistogramManager::Instance()->CreateHistogram("Charge", 50, 0.0, 500.0);
+  HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 0.0, 60e+3);
+  HistogramManager::Instance()->CreateHistogram("TotalEnergyTime", 50, 0.0, 60e+3);
 }
 
 void set_output_files()

@@ -10,6 +10,8 @@ public:
     static HistogramManager* Instance();
     void CreateHistogram(const std::string& name, size_t bins, double min, double max);
     void FillHistogram(const std::string& name, double value);
+    void FillHistogram(const std::string& name, 
+                       double value, double weight);
     void WriteHistograms(const std::string& filename);
 
 private:

@@ -33,6 +33,17 @@ void HistogramManager::FillHistogram(const std::string& name, double value) {
     }
 }
 
+void HistogramManager::FillHistogram(const std::string& name, 
+                                     double value, double weight) {
+    auto it = fHistograms.find(name);
+    if (it != fHistograms.end()) {
+        gsl_histogram_accumulate(it->second, value, weight);
+    } else {
+        std::cerr << "Histogram " << name << " not found!" << std::endl;
+    }
+}
+
+
 void HistogramManager::WriteHistograms(const std::string& filename) {
     FILE* file = fopen(filename.c_str(), "w");
     if (!file) {
