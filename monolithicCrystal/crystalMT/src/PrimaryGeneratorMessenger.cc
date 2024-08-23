@@ -34,6 +34,11 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
   fGaussianCmd->SetParameterName("gaussian",false);
   fGaussianCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fZUniformCmd = new G4UIcmdWithABool("/primary/zUniform",this);
+  fZUniformCmd->SetGuidance("Define if z generated uniformly or following x0 prob");
+  fZUniformCmd->SetParameterName("zUniform",false);
+  fZUniformCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   fFanoCmd = new G4UIcmdWithADouble("/primary/fano",this);
   fFanoCmd->SetGuidance("Fano factor");
   fFanoCmd->SetParameterName("fano",false);
@@ -53,6 +58,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
   delete fDirectory ;
   delete fNPhotonsCmd;
   delete fGaussianCmd;
+  delete fZUniformCmd;
   delete fFanoCmd;
   delete fTimeBinningCmd;
 }
@@ -67,6 +73,9 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 
   if( command ==  fGaussianCmd )
     {GlobalPars::Instance()->fGaussian = fGaussianCmd->GetNewBoolValue(newValue);}
+
+if( command ==  fZUniformCmd )
+    {GlobalPars::Instance()->fZUniform = fZUniformCmd->GetNewBoolValue(newValue);}
 
   if( command ==  fFanoCmd )
     {GlobalPars::Instance()->fFano = fFanoCmd->GetNewDoubleValue(newValue);}

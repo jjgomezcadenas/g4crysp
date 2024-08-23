@@ -17,6 +17,7 @@ public:
   G4double  fFano;
   G4double  fTimeBinning;
   G4bool    fGaussian ;
+  G4bool    fZUniform;
   G4int fNumberOfEvents;
 
   std::string fSensorDataFileName;

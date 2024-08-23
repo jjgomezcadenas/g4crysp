@@ -39,6 +39,7 @@ private:
   G4double fZ; 
   G4int fScintPhotons;
   G4double fScmax;
+  G4double fX0;
   G4PhysicsOrderedFreeVector* fSpectrumIntegral;
 
   //static std::mutex gammaIntFileMutex;

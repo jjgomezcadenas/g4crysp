@@ -30,5 +30,6 @@ private:
   G4UIcmdWithADouble*         fFanoCmd = nullptr;
   G4UIcmdWithADoubleAndUnit*  fTimeBinningCmd = nullptr;
   G4UIcmdWithABool*           fGaussianCmd = nullptr;
+  G4UIcmdWithABool*           fZUniformCmd = nullptr;
 };
 #endif 

@@ -50,6 +50,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
  
   // Get material properties 
   G4Material* mat = fenvLV->GetMaterial();
+  fX0 = mat->GetRadlen();
   G4MaterialPropertiesTable* mpt = mat->GetMaterialPropertiesTable();
 
   if (!mpt) {
@@ -106,10 +107,24 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   // a number n of optical photons will be generated. 
   
  
-  // Create a new vertex
+  // Create a new vertex uniform in xy 
   auto x0 = fXY * (G4UniformRand()-0.5);
   auto y0 = fXY * (G4UniformRand()-0.5);
-  auto z0 = -0.5 * fZ  * (G4UniformRand()-0.5);
+  auto z0 = 0.0;
+
+  // in z the vertex can be uniform or following the probability of interaction
+  // of a gamma of 511 keV.
+  if (GlobalPars::Instance()->fZUniform)
+  {
+    z0 = fZ  * (G4UniformRand()-0.5); // fixed a bug! -0.5*fZ  * (G4UniformRand()-0.5)
+  }
+  else
+  {
+    auto z_min = -0.5 * fZ, z_max = 0.5 * fZ;
+    do {
+        z0 = z_min - fX0 * G4Log(G4UniformRand()); // Generate z according to the exponential distribution
+    } while (z0 > z_max); // Ensure that z is within the desired range
+  }
   auto time = 0; // all optical photons generated here with same time.
   G4ThreeVector position(x0,y0,z0);
     
