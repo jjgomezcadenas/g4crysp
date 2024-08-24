@@ -1,0 +1,6 @@
+/globalpars/seed 12340001 # change the seed for multiple runs to 0002, 0003 etc.
+/globalpars/idataonly false
+/globalpars/SensorDataFileName /Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasZRTest/sensor_data_ 
+/globalpars/ISensorDataFileName /Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasZRTest/isensor_data_ 
+/globalpars/GammaInteractionsFileName /Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasZRTest/gamma_interactions_
+/globalpars/HistogramsFileName /Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasZRTest/control_histograms_ 

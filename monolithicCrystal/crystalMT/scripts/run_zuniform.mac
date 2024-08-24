@@ -1,0 +1,55 @@
+# 
+# Can be run in batch, without graphic
+# or interactively: Idle> /control/execute run1.mac
+#
+# Defube seed in init_globals
+#/globals/seed 12340001 # change the seed for multiple runs to 0002, 0003 etc.
+
+# Will run the default, e.g, 8 threads. 
+/run/numberOfThreads 8
+
+#
+# Set some default verbose
+/control/verbose 1
+/control/saveHistory
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+
+# Detector construction
+
+/detector/crystalMaterial CsI
+/detector/crystalWidth 48 mm
+/detector/crystalX0Length 2
+/detector/teflonThickness 0.08 mm
+/detector/teflonCoatings 5
+/detector/sipmXY 6 mm
+/detector/sipmZ 1 mm
+/detector/epoxyZ 0.15 mm
+/detector/sipmActiveXY 5.9 mm
+/detector/sipmActiveZ 0.01 mm
+
+
+# Primary generator
+# We define the random seed in the primary generator
+# if gaussian is false, then nphotons are generated
+# if gaussian is true, then Gauss::(fScintPhotons, sqrt(fFano * fScintPhotons)
+# That is a gaussian distribution
+# around the average number of scint phot for the material corrrected by Fano. 
+# if zUniform, gammas are generated uniform in z, otherwise they are generated
+# according to the interaction probability of a gamma of 511 keV in the crystal.
+# if zReverse is true the probabiliy of z is reversed.
+
+/primary/nphotons 1
+/primary/gaussian true
+/primary/zUniform true
+/primary/zReverse false
+/primary/fano 1.1
+/primary/timeBinning 200 ns
+
+# Initialize kernel
+/run/initialize
+
+# number of events to generate
+/run/beamOn 10000
