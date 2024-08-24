@@ -124,8 +124,17 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     do {
         z0 = z_min - fX0 * G4Log(G4UniformRand()); // Generate z according to the exponential distribution
     } while (z0 > z_max); // Ensure that z is within the desired range
+
+    if (GlobalPars::Instance()->fZReverse) // Reverse Z probability
+    {
+      z0 = z_max + z_min - z0;
+    }
   }
+  //G4cout << "z0 = " << z0 << G4endl;
   auto time = 0; // all optical photons generated here with same time.
+  HistogramManager::Instance()->FillHistogram("X0", x0);
+  HistogramManager::Instance()->FillHistogram("Y0", y0);
+  HistogramManager::Instance()->FillHistogram("Z0", z0);
   G4ThreeVector position(x0,y0,z0);
     
   G4PrimaryVertex* vertex = new G4PrimaryVertex(position, time);

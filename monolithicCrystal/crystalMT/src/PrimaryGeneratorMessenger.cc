@@ -39,6 +39,11 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
   fZUniformCmd->SetParameterName("zUniform",false);
   fZUniformCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fZReverseCmd = new G4UIcmdWithABool("/primary/zReverse",this);
+  fZReverseCmd->SetGuidance("True is z prob is reversed");
+  fZReverseCmd->SetParameterName("zReverse",false);
+  fZReverseCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   fFanoCmd = new G4UIcmdWithADouble("/primary/fano",this);
   fFanoCmd->SetGuidance("Fano factor");
   fFanoCmd->SetParameterName("fano",false);
@@ -59,6 +64,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
   delete fNPhotonsCmd;
   delete fGaussianCmd;
   delete fZUniformCmd;
+  delete fZReverseCmd; 
   delete fFanoCmd;
   delete fTimeBinningCmd;
 }
@@ -76,6 +82,9 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 
 if( command ==  fZUniformCmd )
     {GlobalPars::Instance()->fZUniform = fZUniformCmd->GetNewBoolValue(newValue);}
+
+if( command ==  fZReverseCmd )
+    {GlobalPars::Instance()->fZReverse = fZReverseCmd->GetNewBoolValue(newValue);}
 
   if( command ==  fFanoCmd )
     {GlobalPars::Instance()->fFano = fFanoCmd->GetNewDoubleValue(newValue);}

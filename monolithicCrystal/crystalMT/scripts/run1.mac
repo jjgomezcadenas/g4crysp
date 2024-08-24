@@ -38,11 +38,13 @@
 # That is a gaussian distribution
 # around the average number of scint phot for the material corrrected by Fano. 
 # if zUniform, gammas are generated uniform in z, otherwise they are generated
-# according to the interaction probability of a gamma of 511 keV in the crystal. 
+# according to the interaction probability of a gamma of 511 keV in the crystal.
+# if zReverse is true the probabiliy of z is reversed.
 
 /primary/nphotons 1
 /primary/gaussian true
 /primary/zUniform true
+/primary/zReverse false
 /primary/fano 1.1
 /primary/timeBinning 200 ns
 

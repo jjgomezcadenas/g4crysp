@@ -116,8 +116,14 @@ def prepare_images_and_metadata(csvdir, imgsufx="Img"):
     create_directory(imgdir)
     csvfiles = glob.glob(f"{csvdir}/*.csv")
 
+    # Read all the datafiles to check that nothing is corrupt before conversion
     for n, csvf in enumerate(csvfiles):
-        print(f"Reading file {n+1}")
+            print(f"Reading file {n+1}, file name = {csvf}")
+            df = pd.read_csv(csvf, header=0).sort_values(by='event').reset_index(drop=True)
+
+    # Now convert
+    for n, csvf in enumerate(csvfiles):
+        print(f"Reading file {n+1}, file name = {csvf}")
         df = pd.read_csv(csvf, header=0).sort_values(by='event').reset_index(drop=True)
         pfx, nn = get_file_prefix_and_number(csvf)
 
@@ -135,5 +141,5 @@ def prepare_images_and_metadata(csvdir, imgsufx="Img"):
 
    
 if __name__ == "__main__":
-    csvdir = "/Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasUniform"
+    csvdir = "/Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasZX0"
     prepare_images_and_metadata(csvdir, imgsufx="Img")

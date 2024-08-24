@@ -31,5 +31,6 @@ private:
   G4UIcmdWithADoubleAndUnit*  fTimeBinningCmd = nullptr;
   G4UIcmdWithABool*           fGaussianCmd = nullptr;
   G4UIcmdWithABool*           fZUniformCmd = nullptr;
+  G4UIcmdWithABool*           fZReverseCmd = nullptr;
 };
 #endif 

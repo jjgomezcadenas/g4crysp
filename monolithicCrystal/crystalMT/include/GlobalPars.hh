@@ -18,6 +18,7 @@ public:
   G4double  fTimeBinning;
   G4bool    fGaussian ;
   G4bool    fZUniform;
+  G4bool    fZReverse;
   G4int fNumberOfEvents;
 
   std::string fSensorDataFileName;

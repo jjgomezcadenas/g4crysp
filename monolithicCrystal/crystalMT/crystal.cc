@@ -143,7 +143,7 @@ int main(int argc,char** argv)
   if (GlobalPars::Instance()->fIDataOnly == false){
   GlobalPars::Instance()->sensorDataFile.close();
   }
-  
+
   GlobalPars::Instance()->iSensorDataFile.close();
   GlobalPars::Instance()->gammaIntFile.close();
 
@@ -157,6 +157,9 @@ int main(int argc,char** argv)
 void book_histograms()
 {
   HistogramManager::Instance()->CreateHistogram("PrimaryParticleSpectrum_nm", 80, 0.0, 800.0);
+  HistogramManager::Instance()->CreateHistogram("X0", 50, -25.0, 25.0);
+  HistogramManager::Instance()->CreateHistogram("Y0", 50, -25.0, 25.0);
+  HistogramManager::Instance()->CreateHistogram("Z0", 50, -25.0, 25.0);
   HistogramManager::Instance()->CreateHistogram("Yield", 50, 50e+3, 55e+3);
   HistogramManager::Instance()->CreateHistogram("DecayTime", 50, 0.0, 5e+3);
   HistogramManager::Instance()->CreateHistogram("TimeBin", 50, 0.0, 25.0);
