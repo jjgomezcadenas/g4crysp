@@ -141,5 +141,5 @@ def prepare_images_and_metadata(csvdir, imgsufx="Img"):
 
    
 if __name__ == "__main__":
-    csvdir = "/Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasZX0"
+    csvdir = "/Users/jjgomezcadenas/Data/G4Prods/crystalMT/csiGammasZR"
     prepare_images_and_metadata(csvdir, imgsufx="Img")
