@@ -20,10 +20,13 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>  // or #include <stdlib.h>
+#include <chrono>
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+ // Start time measurement
+auto start = std::chrono::high_resolution_clock::now();
 void book_histograms();
 void set_output_files();
 std::string set_histo_filename();
@@ -146,6 +149,13 @@ int main(int argc,char** argv)
 
   GlobalPars::Instance()->iSensorDataFile.close();
   GlobalPars::Instance()->gammaIntFile.close();
+
+// End time measurement
+  auto end = std::chrono::high_resolution_clock::now();
+
+  // Calculate elapsed time
+  std::chrono::duration<double> elapsed = end - start;
+  std::cout << "Elapsed time: " << elapsed.count() << " seconds" << std::endl;
 
   delete visManager;
   delete runManager;
