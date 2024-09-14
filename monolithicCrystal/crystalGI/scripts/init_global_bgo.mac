@@ -1,0 +1,7 @@
+/globalpars/seed 12340001 # change the seed for multiple runs to 0002, 0003 etc.
+/globalpars/idataonly false
+/globalpars/SensorDataFileName sensor_data_bgo_ 
+/globalpars/ISensorDataFileName isensor_data_bgo_ 
+/globalpars/GammaInteractionsFileName gamma_interactions_bgo_
+/globalpars/HistogramsFileName control_histograms_bgo
+_ 
