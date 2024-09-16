@@ -15,20 +15,26 @@ TrackingAction::TrackingAction() : G4UserTrackingAction() {}
 
 TrackingAction::~TrackingAction() {}
 
+
+
 void TrackingAction::PreUserTrackingAction(const G4Track* track) {
-    // Enable trajectory storage for optical photons
-    // *** not for the time being, to avoide cluttering while I debug secondaries **/
-
+    // Enable trajectory storage for optical photons if generation of gammas allowed.
+   
     if (track->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition()) {
-        return ;
-        //G4TrackingManager* trackingManager = G4EventManager::GetEventManager()->GetTrackingManager();
 
-        //trackingManager->SetStoreTrajectory(true);
-        //trackingManager->SetTrajectory(new G4Trajectory(track));
+        if (GlobalPars::Instance()->fGOP == true){
+            G4TrackingManager* trackingManager = G4EventManager::GetEventManager()->GetTrackingManager();
+            trackingManager->SetStoreTrajectory(true);
+            trackingManager->SetTrajectory(new G4Trajectory(track));
+            return;
 
-        // How come this has ever worked?? It uses some sort of private field!!! ???
-        //fpTrackingManager->SetStoreTrajectory(true);
-        //fpTrackingManager->SetTrajectory(new G4Trajectory(track));
+            // How come this has ever worked?? fpTrackingManager should be private!!!
+            //fpTrackingManager->SetStoreTrajectory(true);
+            //fpTrackingManager->SetTrajectory(new G4Trajectory(track));
+        }else{
+            return ;
+        }
+        
     }
 
     auto trj = new G4Trajectory(track); 
@@ -43,11 +49,6 @@ void TrackingAction::PreUserTrackingAction(const G4Track* track) {
     }  
 
     auto kin_energy = track->GetKineticEnergy();
- 
-    //   if (kin_energy < 1 * keV) {
-    //     return;
-    // }
-
     G4VPhysicalVolume* initialVolume = track->GetVolume();
     std::string initialVolumeName = (initialVolume != nullptr) ? initialVolume->GetName() : "Unknown";
   

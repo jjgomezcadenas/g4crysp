@@ -12,13 +12,8 @@ class GlobalPars
 public:
   static GlobalPars* Instance();
   G4String  gSDCollection ;
-  G4int     fNphotons;
   G4int     fSeed;
-  G4double  fFano;
   G4double  fTimeBinning;
-  G4bool    fGaussian ;
-  G4bool    fZUniform;
-  G4bool    fZReverse;
   G4int fNumberOfEvents;
   G4int fEventNumber;
 
@@ -36,6 +31,7 @@ public:
   std::mutex gammaIntFileMutex;
 
   bool fIDataOnly;
+  bool fGOP; 
   
 private:
     GlobalPars();

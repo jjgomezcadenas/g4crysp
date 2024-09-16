@@ -48,6 +48,11 @@ GlobalMessenger::GlobalMessenger()
   fIDataOnlyCmd->SetParameterName("idataonly",false);
   fIDataOnlyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fGOPCmd = new G4UIcmdWithABool("/globalpars/generateOpticalPhotons",this);
+  fGOPCmd->SetGuidance("If true generate optical photons");
+  fGOPCmd->SetParameterName("generateOpticalPhotons",false);
+  fGOPCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -61,6 +66,7 @@ GlobalMessenger::~GlobalMessenger()
   delete fGammaDataCmd ;
   delete fHistosCmd;
   delete fIDataOnlyCmd;
+  delete fGOPCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -100,6 +106,11 @@ void GlobalMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if( command ==  fIDataOnlyCmd )
     { 
       GlobalPars::Instance()->fIDataOnly = fIDataOnlyCmd->GetNewBoolValue(newValue);
+    } 
+
+    if( command ==  fGOPCmd )
+    { 
+      GlobalPars::Instance()->fGOP = fGOPCmd->GetNewBoolValue(newValue);
     } 
 
 }

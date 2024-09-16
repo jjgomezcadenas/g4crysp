@@ -53,7 +53,7 @@ int main(int argc,char** argv)
     }
   else
     {
-      G4cout << "Wrong arguments. Call is <./crystalMT init_global.mac run.mac>" << G4endl;
+      G4cout << "Wrong arguments. Call is <./crystalGI init_global.mac run.mac>" << G4endl;
      return 1;
     }
   //UImanager->ApplyCommand("/control/execute init_global.mac");
@@ -110,9 +110,12 @@ int main(int argc,char** argv)
   // Physics list
   auto physicsList = new QBBC;
   physicsList->SetVerboseLevel(0);
-  //auto opticalPhysics = new G4OpticalPhysics();
 
-  //physicsList->RegisterPhysics(opticalPhysics);
+  if (GlobalPars::Instance()->fGOP == true){
+    auto opticalPhysics = new G4OpticalPhysics();
+    physicsList->RegisterPhysics(opticalPhysics);
+  }
+
   runManager->SetUserInitialization(physicsList);
 
   
@@ -169,7 +172,7 @@ void book_histograms()
   HistogramManager::Instance()->CreateHistogram("X0", 50, -25.0, 25.0);
   HistogramManager::Instance()->CreateHistogram("Y0", 50, -25.0, 25.0);
   HistogramManager::Instance()->CreateHistogram("Z0", 50, -25.0, 25.0);
-  HistogramManager::Instance()->CreateHistogram("Yield", 50, 50e+3, 55e+3);
+  //HistogramManager::Instance()->CreateHistogram("Yield", 50, 50e+3, 55e+3);
   HistogramManager::Instance()->CreateHistogram("DecayTime", 50, 0.0, 5e+3);
   HistogramManager::Instance()->CreateHistogram("TimeBin", 50, 0.0, 25.0);
   HistogramManager::Instance()->CreateHistogram("TimeBin2", 50, 0.0, 25.0);

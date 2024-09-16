@@ -27,5 +27,6 @@ private:
   G4UIcmdWithAString*      fGammaDataCmd = nullptr;
   G4UIcmdWithAString*      fHistosCmd = nullptr;
   G4UIcmdWithABool*        fIDataOnlyCmd = nullptr;
+  G4UIcmdWithABool*        fGOPCmd = nullptr;
 };
 #endif 
