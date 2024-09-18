@@ -60,7 +60,6 @@ void SensorSD::Initialize(G4HCofThisEvent* HCE)
 }
 
 
-
 G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
   // Check whether the track is an optical photon
@@ -68,7 +67,9 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   
   G4Track* track = step->GetTrack();
   G4ParticleDefinition* pdef = track->GetDefinition();
-  if (pdef != G4OpticalPhoton::Definition()) return false;
+  if (pdef != G4OpticalPhoton::Definition()) {
+    return false;
+  }
 
 
   const G4VTouchable* touchable = step->GetPostStepPoint()->GetTouchable();

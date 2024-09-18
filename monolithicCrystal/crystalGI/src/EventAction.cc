@@ -7,11 +7,11 @@
 #include "GlobalPars.hh"
 #include "SensorSD.hh"
 #include "HistogramManager.hh"
+#include "G4Threading.hh"
 #include <iostream>
 #include <fstream>
 #include <mutex>
 #include <atomic>
-
 
 
 EventAction::EventAction()
@@ -27,10 +27,9 @@ EventAction::~EventAction()
 
 void EventAction::BeginOfEventAction(const G4Event* event)
 {
-  int seedL4D = GlobalPars::Instance()->fSeed % 10000;
-  G4int eventShift = (seedL4D -1) * GlobalPars::Instance()->fNumberOfEvents;
-  fEventNumber = event->GetEventID() + eventShift;
-  GlobalPars::Instance()->fEventNumber = fEventNumber;
+  
+  //G4cout <<  "Begin of Event: ++ Event id = " << event->GetEventID() << " Thread id =" 
+  //<< G4Threading::G4GetThreadId() << G4endl;
 }
 
 
@@ -39,6 +38,10 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
   G4SDManager* sdmgr = G4SDManager::GetSDMpointer();
   G4HCtable* hct = sdmgr->GetHCtable();
+  fEventNumber = event->GetEventID() + GlobalPars::Instance()->fEventShift;
+
+  //G4cout <<  "End of Event ++ Event id = " << event->GetEventID() << " Thread id =" 
+  //<< G4Threading::G4GetThreadId() << " Shifted event id = " << fEventNumber << G4endl;
 
   
    // Loop through the hits collections

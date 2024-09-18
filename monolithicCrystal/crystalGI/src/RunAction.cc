@@ -19,6 +19,11 @@ void RunAction::BeginOfRunAction(const G4Run* run)
   //inform the runManager to save random number seed
   G4RunManager::GetRunManager()->SetRandomNumberStore(false);
   GlobalPars::Instance()->fNumberOfEvents = run->GetNumberOfEventToBeProcessed();
+  // Handle event numbering as a function of the seed.
+  
+  int seedL4D = GlobalPars::Instance()->fSeed % 10000;
+  G4int eventShift = (seedL4D -1) * GlobalPars::Instance()->fNumberOfEvents;
+  GlobalPars::Instance()->fEventShift = eventShift;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

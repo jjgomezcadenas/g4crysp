@@ -13,6 +13,7 @@ public:
     void FillHistogram(const std::string& name, 
                        double value, double weight);
     void WriteHistograms(const std::string& filename);
+    std::map<std::string, gsl_histogram*> fHistograms;
 
 private:
     HistogramManager();
@@ -20,7 +21,7 @@ private:
     HistogramManager(const HistogramManager&) = delete;
     HistogramManager& operator=(const HistogramManager&) = delete;
 
-    std::map<std::string, gsl_histogram*> fHistograms;
+    
 };
 
 #endif // HISTOGRAM_MANAGER_HH

@@ -77,6 +77,7 @@ int main(int argc,char** argv)
   std::string hfn = set_histo_filename();
 
   // Book histograms.
+
   book_histograms();
 
   //std::exit(1); 
@@ -177,6 +178,7 @@ void book_histograms()
   HistogramManager::Instance()->CreateHistogram("Charge", 50, 0.0, 500.0);
   HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 0.0, 60e+3);
   HistogramManager::Instance()->CreateHistogram("TotalEnergyTime", 50, 0.0, 60e+3);
+
 }
 
 void set_output_files()

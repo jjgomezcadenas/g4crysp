@@ -15,7 +15,7 @@ public:
   G4int     fSeed;
   G4double  fTimeBinning;
   G4int fNumberOfEvents;
-  G4int fEventNumber;
+  G4int fEventShift;
 
   std::string fSensorDataFileName;
   std::string fISensorDataFileName;
