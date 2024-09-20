@@ -29,7 +29,7 @@ DetectorConstruction::DetectorConstruction()
     G4cout << " DetectorConstruction " << G4endl;
 
     fSensorPosFile.open("sensor_positions.csv");
-    fSensorPosFile << "sensor_id, sensor_x, sensor_y, sensor_z\n";
+    fSensorPosFile << "sensor_id,sensor_x,sensor_y,sensor_z\n";
 }
 
 
@@ -57,6 +57,8 @@ void DetectorConstruction::display() const
          << " Size of SiPM epoxy Z (mm) =" << fEpoxyZ/mm
          << " Size of SiPM active Z (mm) =" << fActiveZ/mm
          << G4endl;
+
+         GlobalPars::Instance()->fCrystalWidth = fCrystalWidth;
 
 }
 
@@ -98,6 +100,8 @@ G4Material* DetectorConstruction::DefineMaterial()
       G4Exception("[DetectorConstruction]", "Construct()", FatalException,
                   "Unknown crystal material!");
     }
+
+    GlobalPars::Instance()->fCrystalLength = fCrystalLength;
     return material;
 
 }
@@ -248,7 +252,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     
   auto n_rows = (int)fCrystalWidth/fSipmXY;
   auto n_cols = n_rows;
-    
+  
   for (auto irow = 0; irow < n_rows; irow++)
     {
       for (auto icol = 0; icol < n_cols; icol++)
@@ -263,9 +267,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
           //        <<" y = " << yr
           //        <<" z = " << xz
           //        << G4endl;
-          fSensorPosFile << icol + irow <<  "," << xr << "," << yr << "," << xz <<"\n";
-         
-          
+          fSensorPosFile << irow * n_cols + icol <<  "," << xr << "," << yr << "," << xz <<"\n";
           new G4PVPlacement(0, G4ThreeVector(xr, yr, xz),
                             sipm_logic, "SiPM" + label, lab_logic, true, irow * n_cols + icol);
         }

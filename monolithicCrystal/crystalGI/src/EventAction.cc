@@ -116,8 +116,6 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
           unsigned int time_bin = (unsigned int)((*it).first + 0.5);
           unsigned int charge = (unsigned int)((*it).second + 0.5);
 
-          HistogramManager::Instance()->FillHistogram("TimeBin2", 
-          time_bin, charge);
           HistogramManager::Instance()->FillHistogram("Charge", charge);
 
           amplitude = amplitude + (*it).second;
@@ -141,7 +139,7 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
     }
   HistogramManager::Instance()->FillHistogram("TotalEnergy", 
                                                     totalEnergy);
-  HistogramManager::Instance()->FillHistogram("TotalEnergyTime", 
+  HistogramManager::Instance()->FillHistogram("TotalEnergyFirstTimeBin", 
                                                     totalEnergyTime);
 }
 

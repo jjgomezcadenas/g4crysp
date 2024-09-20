@@ -24,6 +24,7 @@
 #include "Randomize.hh"
 #include "G4MaterialPropertiesTable.hh"
 #include "G4MaterialPropertyVector.hh"
+
 #include "HistogramManager.hh"
 #include <iostream>
 
@@ -96,7 +97,7 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
     }
 
   //time that photon needs to propagate from vertex to sensor
-  auto gtime = step->GetPostStepPoint()->GetGlobalTime(); 
+  auto time = step->GetPostStepPoint()->GetGlobalTime(); 
   auto en = track->GetKineticEnergy();
   auto wl = 1240.0 / (en/eV);
 
@@ -112,10 +113,11 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   }
 
 
+  // *** This was relevant for the generation of photons, now is done by G4 
   // Sample random time using exponential distribution
-  auto timeConstant = mpt->GetConstProperty("SCINTILLATIONTIMECONSTANT1");
-  auto decayTime = -timeConstant * std::log(G4UniformRand());
-  auto time = gtime + decayTime; // decay time + propagation time
+  //auto timeConstant = mpt->GetConstProperty("SCINTILLATIONTIMECONSTANT1");
+  //auto decayTime = -timeConstant * std::log(G4UniformRand());
+  //auto time = gtime + decayTime; // decay time + propagation time
 
   HistogramManager::Instance()->FillHistogram("DecayTime", time);
 

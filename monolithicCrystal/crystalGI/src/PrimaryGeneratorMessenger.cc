@@ -21,6 +21,11 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
   fTimeBinningCmd->SetGuidance("Time binning");
   fTimeBinningCmd->SetParameterName("timeBinning",false);
   fTimeBinningCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fEnergyCmd = new G4UIcmdWithADoubleAndUnit("/primary/gammaEnergy",this);
+  fEnergyCmd->SetGuidance("Energy");
+  fEnergyCmd->SetParameterName("Enery",false);
+  fEnergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -29,6 +34,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
 {
   delete fDirectory ;
   delete fTimeBinningCmd;
+  delete fEnergyCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -37,6 +43,9 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 {
   if( command ==  fTimeBinningCmd )
     {GlobalPars::Instance()->fTimeBinning = fTimeBinningCmd->GetNewDoubleValue(newValue);}
+  
+  if( command ==  fEnergyCmd )
+    {GlobalPars::Instance()->fGammaEnergy = fEnergyCmd->GetNewDoubleValue(newValue);}
   
 }
 

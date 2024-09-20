@@ -14,6 +14,9 @@ public:
   G4String  gSDCollection ;
   G4int     fSeed;
   G4double  fTimeBinning;
+  G4double  fGammaEnergy;
+  G4double  fCrystalWidth;
+  G4double  fCrystalLength;
   G4int fNumberOfEvents;
   G4int fEventShift;
 

@@ -64,6 +64,30 @@ def scatter_xyze(df, figsize=(18,9)):
     plt.show()
 
 
+def plot_time(df, num_bins = 20, xmin=0.0, xmax=5e+3, timebin=200, figsize=(6, 4), title=""):
+    
+    fig, ax0 = plt.subplots(1, 1, figsize=figsize)
+    _, _, _ = ax0.hist(df.time * timebin, num_bins, (xmin, xmax), weights=df.charge)
+    ax0.set_xlabel("Event Time")
+    ax0.set_ylabel('Events/bin')
+    ax0.set_title(title)
+    
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_amplitude(df, num_bins = 20, xmin=2e+4, xmax=4e+4, figsize=(6, 4), title=""):
+    energies = df.groupby("event").sum().amplitude.values
+    
+    fig, ax0 = plt.subplots(1, 1, figsize=figsize)
+    h = ax0.hist(energies, num_bins, (xmin, xmax))
+    ax0.set_xlabel("Event energy")
+    ax0.set_ylabel('Events/bin')
+    ax0.set_title(title)
+    
+    fig.tight_layout()
+    return h[0],h[1]
+    
 def event_size(df):
     return len(np.unique(df.event))
 
@@ -106,12 +130,8 @@ def fiducial_select(df, d=48.2, z=37.2):
     return df4
 
 
-def fiducial_df(df, trkl=1000, d=48.2, z=37.2):
-    dfx = df[df.motherid==1]
-    dfx2 = dfx[dfx.trkl<trkl]
-    dff = fiducial_select(dfx2, d, z)
-    
-    gdf = dff.copy().drop(columns=['trkmass','motherid','trkl'])
+def fiducial_df(df, d=48.2, z=37.2):
+    gdf = fiducial_select(df, d, z)
     grdf = gdf.groupby('event')
     gdfa = grdf.agg(
                 etot = ('edep', 'sum'),
@@ -123,6 +143,61 @@ def fiducial_df(df, trkl=1000, d=48.2, z=37.2):
 def twocluster_df(df):
     """
     Creates a df with the position and energy of the two clusters of maximum energy
+    as well as their baricenter
+    """
+    grouped = df.groupby('event')
+
+    # Initialize lists to store results
+    results = []
+    
+    # Iterate over each event group
+    for event_id, group in grouped:
+        # Sort particles by energy in descending order
+        sorted_group = group.sort_values(by='time', ascending=True).reset_index(drop=True)
+        
+        # Extract etot, ntrk from the first particle (they are the same for all particles in the event)
+        event = sorted_group.loc[0, 'event']
+        etot = sorted_group.loc[0, 'etot']
+        ntrk = sorted_group.loc[0, 'ntrk']
+        
+        # Get particle with early time
+        t1, x1, y1, z1, e1 = sorted_group.loc[0, ['time','x', 'y', 'z', 'edep']]
+        
+        # Get particle with second early time
+        if len(sorted_group) > 1:
+            t2, x2, y2, z2, e2 = sorted_group.loc[1, ['time','x', 'y', 'z', 'edep']]
+        else:
+            t2, x2, y2, z2, e2 = t1, x1, y1, z1, e1  # If no second particle, set to first particle
+        
+        # Calculate the baricenter of x1, y1, z1, e1 and x2, y2, z2, e2 (norm to tot energy)
+        if e2 != e1:
+            x12 = (x1 * e1 + x2 * e2) / etot
+            y12 = (y1 * e1 + y2 * e2) / etot
+            z12 = (z1 * e1 + z2 * e2) / etot
+        else:
+            x12, y12, z12 = x1, y1, z1  # If only one particle, baricenter is that particle's coordinates
+        
+        # Calculate the baricenter of all particles in the event
+        xb = (group['x'] * group['edep']).sum() / etot
+        yb = (group['y'] * group['edep']).sum() / etot
+        zb = (group['z'] * group['edep']).sum() / etot
+        
+        # Append the results
+        results.append({'event':event, 'etot':etot,
+            'ntrk': ntrk,
+            't1': t1, 'x1': x1, 'y1': y1, 'z1': z1, 'e1': e1,
+            't2': t2, 'x2': x2, 'y2': y2, 'z2': z2, 'e2': e2,
+            'x12': x12, 'y12': y12, 'z12': z12,
+            'xb': xb, 'yb': yb, 'zb': zb
+        })
+    
+    # Create the final DataFrame
+    return pd.DataFrame(results).reset_index()
+
+
+def three_cluster_df(df):
+    """
+    Creates a df with the position and energy of the three clusters of maximum energy
     as well as their baricenter
     """
     grouped = df.groupby('event')
@@ -149,29 +224,35 @@ def twocluster_df(df):
             x2, y2, z2, e2 = sorted_group.loc[1, ['x', 'y', 'z', 'edep']]
         else:
             x2, y2, z2, e2 = x1, y1, z1, e1  # If no second particle, set to first particle
-        
-        # Calculate the baricenter of x1, y1, z1, e1 and x2, y2, z2, e2
-        if e2 != e1:
-            x12 = (x1 * e1 + x2 * e2) / (e1 + e2)
-            y12 = (y1 * e1 + y2 * e2) / (e1 + e2)
-            z12 = (z1 * e1 + z2 * e2) / (e1 + e2)
+
+
+        # Get particle with third maximum energy (if available)
+        if len(sorted_group) > 2:
+            x3, y3, z3, e3 = sorted_group.loc[2, ['x', 'y', 'z', 'edep']]
         else:
-            x12, y12, z12 = x1, y1, z1  # If only one particle, baricenter is that particle's coordinates
+            x3, y3, z3, e3 = x2, y2, z2, e2  # If no second particle, set to second particle
         
         # Calculate the baricenter of all particles in the event
         total_energy = group['edep'].sum()
-        xb = (group['x'] * group['edep']).sum() / total_energy
-        yb = (group['y'] * group['edep']).sum() / total_energy
-        zb = (group['z'] * group['edep']).sum() / total_energy
-        
+        xb = (group['x'] * group['edep']).sum() / etot
+        yb = (group['y'] * group['edep']).sum() / etot
+        zb = (group['z'] * group['edep']).sum() / etot
+
+
+        # Calculate d12: Distance between (x1, y1, z1) and (x2, y2, z2)
+        d12 = np.sqrt((x2 - x1)**2 + (y2 - y1)**2 + (z2 - z1)**2)
+
+    # Calculate d1b: Distance between (x1, y1, z1) and (xb, yb, zb) 
+        d1b = np.sqrt((xb - x1)**2 + (yb - y1)**2 + (zb - z1)**2)
+
         # Append the results
         results.append({'event':event, 'etot':etot,
             'ntrk': ntrk,
             'proc': proc,
             'x1': x1, 'y1': y1, 'z1': z1, 'e1': e1,
             'x2': x2, 'y2': y2, 'z2': z2, 'e2': e2,
-            'x12': x12, 'y12': y12, 'z12': z12,
-            'xb': xb, 'yb': yb, 'zb': zb
+            'x3': x3, 'y3': y3, 'z3': z3,'e3': e3,
+            'xb': xb, 'yb': yb, 'zb': zb, 'd12':d12, 'd1b':d1b
         })
     
     # Create the final DataFrame
@@ -184,5 +265,8 @@ def add_distances(df):
     
     # Calculate d12b: Distance between (x12, y12, z12) and (xb, yb, zb)
     df['d12b'] = np.sqrt((df['xb'] - df['x12'])**2 + (df['yb'] - df['y12'])**2 + (df['zb'] - df['z12'])**2)
+
+    # Calculate d1b: Distance between (x1, y1, z1) and (x12, y12, z12) 
+    df['d1b'] = np.sqrt((df['x12'] - df['x1'])**2 + (df['y12'] - df['y1'])**2 + (df['z12'] - df['z1'])**2)
 
 

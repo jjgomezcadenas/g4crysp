@@ -169,19 +169,16 @@ int main(int argc,char** argv)
 
 void book_histograms()
 {
-  HistogramManager::Instance()->CreateHistogram("PrimaryParticleSpectrum_nm", 80, 0.0, 800.0);
   HistogramManager::Instance()->CreateHistogram("X0", 50, -25.0, 25.0);
   HistogramManager::Instance()->CreateHistogram("Y0", 50, -25.0, 25.0);
   HistogramManager::Instance()->CreateHistogram("Z0", 50, -25.0, 25.0);
-  HistogramManager::Instance()->CreateHistogram("STEPL", 50, 0.0, 500.0);
-  HistogramManager::Instance()->CreateHistogram("ASTEP", 50, 0.0, 1000.0);
+  HistogramManager::Instance()->CreateHistogram("STEPL", 50, 0.0, 1000.0);
   HistogramManager::Instance()->CreateHistogram("EDEP", 50, 0.0, 600.0);
   HistogramManager::Instance()->CreateHistogram("DecayTime", 50, 0.0, 5e+3);
   HistogramManager::Instance()->CreateHistogram("TimeBin", 50, 0.0, 25.0);
-  HistogramManager::Instance()->CreateHistogram("TimeBin2", 50, 0.0, 25.0);
   HistogramManager::Instance()->CreateHistogram("Charge", 50, 0.0, 500.0);
-  HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 0.0, 60e+3);
-  HistogramManager::Instance()->CreateHistogram("TotalEnergyTime", 50, 0.0, 60e+3);
+  HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 0.0, 50e+3);
+  HistogramManager::Instance()->CreateHistogram("TotalEnergyFirstTimeBin", 50, 0.0, 50e+3);
 
   for (const auto& entry : HistogramManager::Instance()->fHistograms) {
        G4cout << "# Histogram name: %s\n", entry.first.c_str();
@@ -205,8 +202,10 @@ void set_output_files()
   GlobalPars::Instance()->iSensorDataFile.open(isdf);
   GlobalPars::Instance()->gammaIntFile.open(gint);
   GlobalPars::Instance()->iSensorDataFile << "event,sensor_id,amplitude\n";
-  GlobalPars::Instance(
-  )->gammaIntFile << "event,trkid,trkmass,motherid,x,y,z,trkl,edep,proc\n";
+  //GlobalPars::Instance(
+  //)->gammaIntFile << "event,trkid,trkmass,motherid,x,y,z,trkl,edep,proc\n";
+
+  GlobalPars::Instance()->gammaIntFile << "event,time,x,y,z,edep\n";
 
 }
 
