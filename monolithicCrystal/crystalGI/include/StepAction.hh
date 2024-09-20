@@ -17,15 +17,10 @@ class StepAction : public G4UserSteppingAction
                                  double post, double poske, double stepl, double edep,
                                  G4ThreeVector posxyz) const  ;
 
-    void write_step_info(int eventID, int trkid, double trkmass, int parentID, 
-                                 std::string creatorProcessName, 
-                                 double post, double poske, double stepl, double edep,
-                                 G4ThreeVector posxyz) const;
     
-    void write_step_info2(int eventID,  double time, double edep, G4ThreeVector posxyz) const; 
+    void write_step_info(int eventID,  double time, double edep, G4ThreeVector posxyz) const; 
 
-    //std::vector<double> fedep;
-    //std::vector<double> fstep;
+
     double fedep = 0.0;
     double fstep = 0.0; 
     double fke = 0.0;

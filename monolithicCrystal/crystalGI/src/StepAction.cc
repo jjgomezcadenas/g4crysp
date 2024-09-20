@@ -10,12 +10,6 @@
 #include "GlobalPars.hh"
 #include "HistogramManager.hh"
 #include "G4Threading.hh"
-#include "G4TouchableHandle.hh"
-#include "G4AffineTransform.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VSolid.hh"
-#include "G4Box.hh"
 #include <iostream>
 #include <fstream>
 #include <mutex>
@@ -43,26 +37,13 @@ void StepAction::UserSteppingAction(const G4Step* step)
 
     // trk id and creator process
     auto trkid = track->GetTrackID();
-    //const G4VProcess* creatorProcess = track->GetCreatorProcess();
-    //std::string creatorProcessName = (creatorProcess != nullptr) ? creatorProcess->GetProcessName() : "Primary";
-
+    
     auto stepl  = step->GetStepLength() ;
     auto postep = step->GetPostStepPoint() ;
     auto post   = postep->GetGlobalTime() ;
     auto poske  = postep->GetKineticEnergy() ;
-    //auto trkmass   = postep->GetMass();
     G4ThreeVector posxyz = postep->GetPosition(); 
-
-    // const G4VTouchable* touchable = postep->GetTouchable();
-    // auto box = dynamic_cast<G4Box*>(touchable->GetVolume()->GetLogicalVolume()->GetSolid());
-    
-    // G4ThreeVector globalPosition = touchable->GetHistory()->GetTopTransform().Inverse().TransformPoint(G4ThreeVector(0, 0, 0));
-
-    // auto xHL = box->GetXHalfLength();
-    // auto yHL = box->GetYHalfLength();
-    // auto zHL = box->GetZHalfLength();
-    
-    
+        
     auto ged = 0.0;
     
     HistogramManager::Instance()->FillHistogram("STEPL", stepl);
@@ -79,7 +60,7 @@ void StepAction::UserSteppingAction(const G4Step* step)
             //print_step_info("GAMMAINT", eventID, threadID, trkid, trkmass, parentID, "FirstInt", 
             //            post, poske, stepl, ged, posxyz);
             
-            write_step_info2(fEventNumber, post, ged, posxyz);
+            write_step_info(fEventNumber, post, ged, posxyz);
             HistogramManager::Instance()->FillHistogram("EDEP", ged/keV);
         }
         else if (poske < fke)
@@ -89,50 +70,10 @@ void StepAction::UserSteppingAction(const G4Step* step)
             //print_step_info("GAMMAINT", eventID, threadID, trkid, trkmass, parentID, "SecInt", 
             //            post, poske, stepl, ged, posxyz);
             
-            write_step_info2(fEventNumber, post, ged, posxyz);
+            write_step_info(fEventNumber, post, ged, posxyz);
             HistogramManager::Instance()->FillHistogram("EDEP", ged/keV);
         }
-        //else
-        //{
-        //     G4cout << "Global position of volume = " << globalPosition / mm << " mm" << G4endl;
-
-        //    G4cout << "Dimensions of the volume: x =  "
-        //        << 2 * xHL / mm << " mm;  y = "
-        //        << 2 * yHL / mm << " mm;  z = "
-        //        << 2 * zHL / mm << " mm" << G4endl;
-
-            
-            //G4cout << " \n position of gamma:  x (mm) =" << (float)posxyz.x()<< 
-            //" y (mm) =" << (float)posxyz.y() << 
-            //" z (mm) ="  <<(float)posxyz.z() << G4endl;
-
-            // G4cout << " \n crystal width (mm) =" << GlobalPars::Instance()->fCrystalWidth<< 
-            // " crystal length =" << GlobalPars::Instance()->fCrystalLength <<  G4endl;
-
-        //}
     }
-
-    
-    //print_step_info("STEP", eventID, threadID, trkid, trkmass, parentID, creatorProcessName, 
-    //                post, poske, stepl, edep, posxyz);
-    // if(poske == 0 && edep == 0)
-    // {
-    //     //print_step_info("END", fEventNumber, threadID, trkid, trkmass, parentID, creatorProcessName, 
-    //     //                post, poske, fstep, fedep, posxyz);
-    //     write_step_info(fEventNumber, trkid, trkmass, parentID, creatorProcessName, 
-    //                     post, poske, fstep, fedep, posxyz);
-
-        
-        
-    //     fedep = 0.0;
-    //     fstep = 0.0;
-    //     track->SetTrackStatus(fStopAndKill);
-    // }
-    // else
-    // {
-    //     fedep += edep;
-    //     fstep += stepl;
-    // }
 
 }
 
@@ -159,21 +100,8 @@ void StepAction::print_step_info(std::string steptype, int eventID, int threadID
 
 }
 
-void StepAction::write_step_info(int eventID, int trkid, double trkmass, int parentID, 
-                                 std::string creatorProcessName, 
-                                 double post, double poske, double stepl, double edep,
-                                 G4ThreeVector posxyz) const 
-{
-    std::lock_guard<std::mutex> guard(GlobalPars::Instance()->gammaIntFileMutex);
-    GlobalPars::Instance()->gammaIntFile << std::fixed << std::setprecision(1);
-    GlobalPars::Instance()->gammaIntFile << eventID << "," << 
-    trkid << "," << trkmass/keV << "," << parentID << "," <<
-    (float)posxyz.x()<< "," << posxyz.y() << ","  <<(float)posxyz.z() << "," << 
-    stepl/um << "," << edep/keV << "," <<  
-    creatorProcessName << "\n";
-}
 
-void StepAction::write_step_info2(int eventID,  double time, double edep, G4ThreeVector posxyz) const 
+void StepAction::write_step_info(int eventID,  double time, double edep, G4ThreeVector posxyz) const 
 {
     std::lock_guard<std::mutex> guard(GlobalPars::Instance()->gammaIntFileMutex);
     GlobalPars::Instance()->gammaIntFile << std::fixed << std::setprecision(1);

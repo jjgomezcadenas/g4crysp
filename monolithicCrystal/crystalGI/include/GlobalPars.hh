@@ -28,6 +28,7 @@ public:
   std::ofstream sensorDataFile;
   std::ofstream iSensorDataFile;
   std::ofstream gammaIntFile;
+  std::ofstream globalsFile;
 
   std::mutex sensorDataFileMutex;
   std::mutex iSensorDataFileMutex;

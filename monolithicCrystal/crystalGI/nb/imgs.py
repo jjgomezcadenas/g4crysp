@@ -38,8 +38,8 @@ def get_gamma_position(dfg, evtsel, x_spatial, y_spatial):
 
     xt2, yt2 = transform_coordinates(df.x2.values[0], df.y2.values[0], 
                                      x_spatial, y_spatial)
-    print(xt1, yt1)
-    print(xt2, yt2)
+    #print(xt1, yt1)
+    #print(xt2, yt2)
 
     return xt1, yt1,xt2, yt2
     
@@ -74,6 +74,9 @@ def plot_image(dfq, dfg,  evtsel, x_spatial, y_spatial, figsize=(6, 6)):
 
     ax1.scatter(xt1, yt1,  facecolor='red')
     ax1.scatter(xt2, yt2,  facecolor='blue')
+
+    ax1.text(2, 6, f"Event = {evtsel}", color='white', fontsize=12, ha='center', va='center')
+
     plt.tight_layout()
     plt.show()
     

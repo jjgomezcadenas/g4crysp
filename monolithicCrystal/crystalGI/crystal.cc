@@ -28,6 +28,7 @@ auto start = std::chrono::high_resolution_clock::now();
 void book_histograms();
 void set_output_files();
 std::string set_histo_filename();
+void write_global_pars();
 
 int main(int argc,char** argv)
 {
@@ -145,7 +146,11 @@ int main(int argc,char** argv)
   // Write histograms to file
   HistogramManager::Instance()->WriteHistograms(hfn);
 
+  write_global_pars();
   // close files
+
+  GlobalPars::Instance()->globalsFile.close();
+  
   if (GlobalPars::Instance()->fIDataOnly == false){
   GlobalPars::Instance()->sensorDataFile.close();
   }
@@ -217,4 +222,17 @@ std::string set_histo_filename()
   return GlobalPars::Instance()->fHistoFileName + l4d + ".txt";
 
 }
-  
+
+void write_global_pars()
+{
+
+  GlobalPars::Instance()->globalsFile.open("global_pars.csv");
+  GlobalPars::Instance()->globalsFile << "seed,timeBinning,gammaEnergy,crystalWidth,crystalLength,numberOfEvents\n";
+  GlobalPars::Instance()->globalsFile << GlobalPars::Instance()->fSeed << "," << 
+                                         GlobalPars::Instance()->fTimeBinning << "," <<
+                                         GlobalPars::Instance()->fGammaEnergy << "," <<
+                                         GlobalPars::Instance()->fCrystalWidth << "," <<
+                                         GlobalPars::Instance()->fCrystalLength << "," <<
+                                         GlobalPars::Instance()->fNumberOfEvents ; 
+
+}
