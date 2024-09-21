@@ -17,6 +17,9 @@ RunAction::RunAction()
 void RunAction::BeginOfRunAction(const G4Run* run)
 {
   //inform the runManager to save random number seed
+  // NB, chosen seed and shift module allow the range between 
+  // fSeed=12340001 and 12341000, e.g, 1000 files (with 10^4 events that's a total of 10^7 events)
+
   G4RunManager::GetRunManager()->SetRandomNumberStore(false);
   GlobalPars::Instance()->fNumberOfEvents = run->GetNumberOfEventToBeProcessed();
   // Handle event numbering as a function of the seed.

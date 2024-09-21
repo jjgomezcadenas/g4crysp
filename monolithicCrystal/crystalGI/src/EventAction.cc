@@ -38,8 +38,9 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
   G4SDManager* sdmgr = G4SDManager::GetSDMpointer();
   G4HCtable* hct = sdmgr->GetHCtable();
-  fEventNumber = event->GetEventID() + GlobalPars::Instance()->fEventShift;
-
+  fEventNumber = event->GetEventID() + GlobalPars::Instance()->fEventShift ;
+  //fEventNumber = event->GetEventID() + GlobalPars::Instance()->fEventShift + GlobalPars::Instance()->fNumberOfEvents;
+  
   //G4cout <<  "End of Event ++ Event id = " << event->GetEventID() << " Thread id =" 
   //<< G4Threading::G4GetThreadId() << " Shifted event id = " << fEventNumber << G4endl;
 

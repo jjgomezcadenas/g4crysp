@@ -20,8 +20,9 @@ void StepAction::UserSteppingAction(const G4Step* step)
 {
     auto eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
     auto threadID = G4Threading::G4GetThreadId();
-    auto fEventNumber = eventID + GlobalPars::Instance()->fEventShift;
-
+    auto fEventNumber = eventID + GlobalPars::Instance()->fEventShift ;
+    //+ GlobalPars::Instance()->fNumberOfEvents;
+    
     //G4cout <<  "Stepping action ++ Event id = " << eventID << " Thread id =" 
     //<< threadID << " Shifted event id = " << fEventNumber << G4endl;
     // Get the particle associated with the step

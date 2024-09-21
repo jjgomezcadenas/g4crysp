@@ -17,6 +17,8 @@ public:
   G4double  fGammaEnergy;
   G4double  fCrystalWidth;
   G4double  fCrystalLength;
+  std::string  fMaterial;
+  G4double  fSipmXY;
   G4int fNumberOfEvents;
   G4int fEventShift;
 

@@ -26,9 +26,9 @@
  // Start time measurement
 auto start = std::chrono::high_resolution_clock::now();
 void book_histograms();
-void set_output_files();
-std::string set_histo_filename();
-void write_global_pars();
+void set_output_files(std::string l4d);
+std::string set_histo_filename(std::string l4d);
+void write_global_pars(std::string l4d);
 
 int main(int argc,char** argv)
 {
@@ -59,23 +59,22 @@ int main(int argc,char** argv)
     }
   //UImanager->ApplyCommand("/control/execute init_global.mac");
  
-  
-
   // set the random seed
   G4cout << "Random seed set to: " << GlobalPars::Instance()->fSeed
          << G4endl;
 
   G4Random::setTheSeed(GlobalPars::Instance()->fSeed);
+  int seedL4D = GlobalPars::Instance()->fSeed % 10000;
+  std::string l4d = std::to_string(seedL4D);
 
   // Set the name of the sensor hit collection (arbitrary) in globals
   GlobalPars::Instance()->gSDCollection = "SensorHitsCollection";
 
-  
   // open files
-  set_output_files();
+  set_output_files(l4d);
 
   // set histofile name
-  std::string hfn = set_histo_filename();
+  std::string hfn = set_histo_filename(l4d);
 
   // Book histograms.
   book_histograms();
@@ -146,11 +145,11 @@ int main(int argc,char** argv)
   // Write histograms to file
   HistogramManager::Instance()->WriteHistograms(hfn);
 
-  write_global_pars();
+  write_global_pars(l4d);
   // close files
 
   GlobalPars::Instance()->globalsFile.close();
-  
+
   if (GlobalPars::Instance()->fIDataOnly == false){
   GlobalPars::Instance()->sensorDataFile.close();
   }
@@ -185,16 +184,14 @@ void book_histograms()
   HistogramManager::Instance()->CreateHistogram("TotalEnergy", 50, 0.0, 50e+3);
   HistogramManager::Instance()->CreateHistogram("TotalEnergyFirstTimeBin", 50, 0.0, 50e+3);
 
-  for (const auto& entry : HistogramManager::Instance()->fHistograms) {
-       G4cout << "# Histogram name: %s\n", entry.first.c_str();
-    }
+  // for (const auto& entry : HistogramManager::Instance()->fHistograms) {
+  //      G4cout << "# Histogram name: %s\n", entry.first.c_str();
+  //   }
 }
 
-void set_output_files()
-{
-  int seedL4D = GlobalPars::Instance()->fSeed % 10000;
-  std::string l4d = std::to_string(seedL4D);
 
+void set_output_files(std::string l4d)
+{
   std::string sdf = GlobalPars::Instance()->fSensorDataFileName + l4d + ".csv";
   std::string isdf = GlobalPars::Instance()->fISensorDataFileName + l4d + ".csv";
   std::string gint = GlobalPars::Instance()->fGammaDataFileName + l4d + ".csv";
@@ -211,28 +208,28 @@ void set_output_files()
   //)->gammaIntFile << "event,trkid,trkmass,motherid,x,y,z,trkl,edep,proc\n";
 
   GlobalPars::Instance()->gammaIntFile << "event,time,x,y,z,edep\n";
-
 }
 
-std::string set_histo_filename()
-{
-  int seedL4D = GlobalPars::Instance()->fSeed % 10000;
-  std::string l4d = std::to_string(seedL4D);
 
+std::string set_histo_filename(std::string l4d)
+{
   return GlobalPars::Instance()->fHistoFileName + l4d + ".txt";
-
 }
 
-void write_global_pars()
+void write_global_pars(std::string l4d)
 {
-
-  GlobalPars::Instance()->globalsFile.open("global_pars.csv");
-  GlobalPars::Instance()->globalsFile << "seed,timeBinning,gammaEnergy,crystalWidth,crystalLength,numberOfEvents\n";
+  std::string sdf = "global_pars_" + l4d + ".csv";
+  GlobalPars::Instance()->globalsFile.open(sdf);
+  std::string xl1 ="seed,timeBinning,gammaEnergy,crystalWidth,crystalLength,";
+  std::string xl2 ="material,sipmXY,numberOfEvents\n";
+  GlobalPars::Instance()->globalsFile << xl1 + xl2;
   GlobalPars::Instance()->globalsFile << GlobalPars::Instance()->fSeed << "," << 
                                          GlobalPars::Instance()->fTimeBinning << "," <<
                                          GlobalPars::Instance()->fGammaEnergy << "," <<
                                          GlobalPars::Instance()->fCrystalWidth << "," <<
                                          GlobalPars::Instance()->fCrystalLength << "," <<
+                                         GlobalPars::Instance()->fMaterial << "," <<
+                                         GlobalPars::Instance()->fSipmXY << "," <<
                                          GlobalPars::Instance()->fNumberOfEvents ; 
 
 }

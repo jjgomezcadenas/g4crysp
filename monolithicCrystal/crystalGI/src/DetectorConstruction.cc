@@ -59,6 +59,8 @@ void DetectorConstruction::display() const
          << G4endl;
 
          GlobalPars::Instance()->fCrystalWidth = fCrystalWidth;
+         GlobalPars::Instance()->fMaterial = fMaterial;
+         GlobalPars::Instance()->fSipmXY = fSipmXY;
 
 }
 
