@@ -1,4 +1,4 @@
-/globalpars/seed 12340003 # change the seed for multiple runs to 0002, 0003 etc.
+/globalpars/seed 12340010 # change the seed for multiple runs to 0002, 0003 etc.
 
 #NB, chosen seed and shift module allow the range between 
 #fSeed=12340001 and 12341000
