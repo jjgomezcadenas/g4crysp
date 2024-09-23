@@ -1,5 +1,16 @@
 /globalpars/seed 12340001 # change the seed for multiple runs to 0002, 0003 etc.
-/globalpars/idataonly false
+
+#NB, chosen seed and shift module allow the range between 
+#fSeed=12340001 and 12341000
+#e.g, 1000 files (with 10^4 events that's a total of 10^7 events)
+
+# To write only integrated data (no time info in sensors)
+/globalpars/idataonly true
+
+# To generate optical photons or not
+/globalpars/generateOpticalPhotons true
+
+# names of files
 /globalpars/SensorDataFileName sensor_data_csi_ 
 /globalpars/ISensorDataFileName isensor_data_csi_ 
 /globalpars/GammaInteractionsFileName gamma_interactions_csi_
