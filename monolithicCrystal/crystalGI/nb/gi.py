@@ -68,7 +68,7 @@ def plot_time(df, num_bins = 20, xmin=0.0, xmax=5e+3, timebin=200, figsize=(6, 4
     
     fig, ax0 = plt.subplots(1, 1, figsize=figsize)
     _, _, _ = ax0.hist(df.time * timebin, num_bins, (xmin, xmax), weights=df.charge)
-    ax0.set_xlabel("Event Time")
+    ax0.set_xlabel("Event Time (ns)")
     ax0.set_ylabel('Events/bin')
     ax0.set_title(title)
     

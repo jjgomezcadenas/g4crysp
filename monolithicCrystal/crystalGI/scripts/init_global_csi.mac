@@ -5,7 +5,7 @@
 #e.g, 1000 files (with 10^4 events that's a total of 10^7 events)
 
 # To write only integrated data (no time info in sensors)
-/globalpars/idataonly true
+/globalpars/idataonly false
 
 # To generate optical photons or not
 /globalpars/generateOpticalPhotons true

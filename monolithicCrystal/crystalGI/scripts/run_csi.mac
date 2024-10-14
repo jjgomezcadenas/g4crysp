@@ -1,6 +1,6 @@
 
 # Will run the default, e.g, 8 threads. 
-/run/numberOfThreads 1
+/run/numberOfThreads 8
 
 #
 # Set some default verbose
@@ -18,7 +18,7 @@
 # When studying concentrators use pure CsI, since light yield is important
 # in this case. Also important in timing studies (CsI faster than CsITl).
 
-/detector/crystalMaterial CsITl 
+/detector/crystalMaterial CsI 
 /detector/crystalWidth 48 mm
 /detector/crystalX0Length 2
 /detector/teflonThickness 0.08 mm
@@ -30,7 +30,7 @@
 /detector/sipmActiveZ 0.01 mm
 
 
-/primary/timeBinning 200 ns
+/primary/timeBinning 100 ps
 /primary/gammaEnergy 511 keV
 
 # Initialize kernel
@@ -43,4 +43,4 @@
 # or 5 runs of 20,000, but do not mix. This is because the length of
 # events is used to compute the shift in the next job within the run. 
 
-/run/beamOn 20000
+/run/beamOn 1000
