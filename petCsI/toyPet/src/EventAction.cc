@@ -38,6 +38,9 @@ void EventAction::EndOfEventAction(const G4Event* event)
   G4HCtable* hct = sdmgr->GetHCtable();
   fEventNumber = event->GetEventID() + GlobalPars::Instance()->fEventShift ;
  
+  G4cout << "++++++End of event action: Event = " << fEventNumber
+  << " number of hit entries  " << hct->entries() <<  G4endl;
+
   
    // Loop through the hits collections
   for (auto i=0; i<hct->entries(); i++) {
@@ -54,7 +57,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
     // Fetch collection using the id number
     G4VHitsCollection* hits = hce->GetHC(hcid);
 
-    //    if (hcname == SensorSD::GetCollectionUniqueName())
+
     if (hcname == GlobalPars::Instance()->gSDCollection)
       {
         StoreSensorHits(hits);
@@ -75,9 +78,9 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
 {
 
   SensorHitsCollection* hits = dynamic_cast<SensorHitsCollection*>(hc);
-  if (!hits) return;
 
-  auto sdname = hits->GetSDname();
+  if (!hits) return;
+  G4cout << "+++++StoreSensorHits: entries = " << hits->entries() << G4endl;
 
 
   for (auto i=0; i<hits->entries(); i++)
@@ -85,6 +88,13 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
       SensorHit* hit = dynamic_cast<SensorHit*>(hits->GetHit(i));
       if (!hit) continue;
       auto xyz = hit->fXYZ;
+
+      G4cout << "fEventNumber = " << fEventNumber << " hit number " << i 
+      << "crystal number = " << hit->fSensorID 
+      << " energy = " << hit->fEnergy 
+      << " XYZ = " << hit->fXYZ
+      << " XYZcrystal = " << hit->fPos
+      << G4endl;
       
 
       WriteCrystalData(fEventNumber, (unsigned int)hit->fSensorID, 
@@ -102,6 +112,7 @@ void EventAction::WriteCrystalData(int64_t evt_number, unsigned int sensor_id, d
 {
    
   std::lock_guard<std::mutex> guard(GlobalPars::Instance()->iSensorDataFileMutex);
+
 
   GlobalPars::Instance()->iSensorDataFile << evt_number << "," << sensor_id << "," << energy << ","
   << (float)xyz.x()<< "," << (float)xyz.y()<< "," << (float)posxyz.z()<< ","

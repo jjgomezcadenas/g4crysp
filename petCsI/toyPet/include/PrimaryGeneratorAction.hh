@@ -13,7 +13,7 @@
 #include <mutex>
 
 class G4Event;
-// class PrimaryGeneratorMessenger;
+class PrimaryGeneratorMessenger;
 class G4ParticleGun;
 
 /// The primary generator action class with particle gun.
@@ -32,6 +32,7 @@ public:
 public:
 
 G4ParticleGun* fParticleGun;    
+PrimaryGeneratorMessenger* fMessenger = nullptr; // messenger
 
 private:
   G4double fRadius ;

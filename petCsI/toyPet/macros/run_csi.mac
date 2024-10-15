@@ -1,6 +1,6 @@
 
 # Will run the default, e.g, 8 threads. 
-/run/numberOfThreads 8
+/run/numberOfThreads 1
 
 #
 # Set some default verbose
@@ -26,7 +26,7 @@
 /detector/petDiameter 774 mm
 /detector/petLength 1024 mm
 
-/primary/gammaEnergy 511 keV
+#/primary/gammaEnergy 511 keV
 
 # Initialize kernel
 /run/initialize

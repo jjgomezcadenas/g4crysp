@@ -14,10 +14,10 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-//PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* pg)
-PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
+PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* pg)
+//PrimaryGeneratorMessenger::PrimaryGeneratorMessenger()
 {
-  
+  fPrimaryGeneratorAction = pg;
   fEnergyCmd = new G4UIcmdWithADoubleAndUnit("/primary/gammaEnergy",this);
   fEnergyCmd->SetGuidance("Energy");
   fEnergyCmd->SetParameterName("Energy",false);

@@ -41,8 +41,10 @@ int main(int argc,char** argv)
   G4UIExecutive* ui = nullptr;
 
   
-  if ( argc == 1 ) { 
-    G4Random::setTheSeed(12340001);
+  if ( argc == 2 ) { 
+    G4String command = "/control/execute ";
+    G4String fileName = argv[1];
+    UImanager->ApplyCommand(command+fileName);
     ui = new G4UIExecutive(argc,argv); // call the UIExecutive only if no parameters
     }
   else if (argc ==3){ // need to init files
@@ -50,15 +52,13 @@ int main(int argc,char** argv)
     G4String command = "/control/execute ";
     G4String fileName = argv[1];
     UImanager->ApplyCommand(command+fileName);
-    //UImanager->ApplyCommand("/control/execute init_global.mac");
     }
   else
     {
-      G4cout << "Wrong arguments. Call is <./petApp init_global.mac run.mac>" << G4endl;
+      G4cout << "Wrong arguments. Call is <./petApp init_global.mac [run.mac]>" << G4endl;
      return 1;
     }
-  //UImanager->ApplyCommand("/control/execute init_global.mac");
- 
+  
   // set the random seed
   G4cout << "Random seed set to: " << GlobalPars::Instance()->fSeed
          << G4endl;
@@ -96,7 +96,7 @@ int main(int argc,char** argv)
   // Invoke here the PrimaryGeneratorMessenger, so that values can be
   // passed to globals (and thus accepted by the PrimaryGenerator constructor)
   
-  PrimaryGeneratorMessenger* pgMessenger = new PrimaryGeneratorMessenger();
+  //PrimaryGeneratorMessenger* pgMessenger = new PrimaryGeneratorMessenger();
 
   // Physics list
   auto physicsList = new QBBC;
@@ -144,7 +144,7 @@ int main(int argc,char** argv)
   std::chrono::duration<double> elapsed = end - start;
   std::cout << "Elapsed time: " << elapsed.count() << " seconds" << std::endl;
 
-  delete visManager;
+  //delete visManager;
   delete runManager;
   //delete pgMessenger;
 }

@@ -32,7 +32,7 @@
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
 {
- 
+  fMessenger = new PrimaryGeneratorMessenger(this);
   // Get the pointer to the logical volume
   auto fenvLV = G4LogicalVolumeStore::GetInstance()->GetVolume("Organ");
   
@@ -50,6 +50,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
  
   fRadius = fEnvelopeBox->GetOuterRadius();
 
+  G4cout << "Primary generator: radius of organ (mm) = " << fRadius/mm << G4endl;
+
   
   fParticleGun = new G4ParticleGun(1);
   
@@ -58,7 +60,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   fParticleGun->SetParticleDefinition(particle);
 
   // Set particle energy to 511 keV
-  fParticleGun->SetParticleEnergy(GlobalPars::Instance()->fGammaEnergy);
+
+  G4cout << "Primary generator: gamma energy (keV) = " << GlobalPars::Instance()->fGammaEnergy/keV << G4endl;
+  fParticleGun->SetParticleEnergy(511*keV);
 
 }
 
@@ -66,7 +70,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
-  delete fParticleGun;;
+  delete fParticleGun;
+  delete fMessenger;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -76,16 +81,20 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   //this function is called at the begining of ecah event
   
   G4ThreeVector position = fRadius * G4RandomDirection();
+
+  G4cout << "Primary generator: position = " << position << G4endl;
   fParticleGun->SetParticlePosition(position);
 
   // Set opposite directions for the two gammas
-  G4ThreeVector direction1 = G4RandomDirection();
+  G4ThreeVector direction = G4RandomDirection();
+
+  G4cout << "Primary generator: direction = " << direction << G4endl;
   
-  fParticleGun->SetParticleMomentumDirection(direction1);
+  fParticleGun->SetParticleMomentumDirection(direction);
   fParticleGun->GeneratePrimaryVertex(event);
 
   // Generate second gamma (opposite direction)
-  fParticleGun->SetParticleMomentumDirection(-direction1);
+  fParticleGun->SetParticleMomentumDirection(-direction);
   fParticleGun->GeneratePrimaryVertex(event);
 
  
