@@ -38,8 +38,8 @@ void EventAction::EndOfEventAction(const G4Event* event)
   G4HCtable* hct = sdmgr->GetHCtable();
   fEventNumber = event->GetEventID() + GlobalPars::Instance()->fEventShift ;
  
-  G4cout << "++++++End of event action: Event = " << fEventNumber
-  << " number of hit entries  " << hct->entries() <<  G4endl;
+  // G4cout << "++++++End of event action: Event = " << fEventNumber
+  // << " number of hit entries  " << hct->entries() <<  G4endl;
 
   
    // Loop through the hits collections
@@ -80,41 +80,38 @@ void EventAction::StoreSensorHits(G4VHitsCollection* hc)
   SensorHitsCollection* hits = dynamic_cast<SensorHitsCollection*>(hc);
 
   if (!hits) return;
-  G4cout << "+++++StoreSensorHits: entries = " << hits->entries() << G4endl;
-
+  //G4cout << "+++++StoreSensorHits: entries = " << hits->entries() << G4endl;
 
   for (auto i=0; i<hits->entries(); i++)
     {
       SensorHit* hit = dynamic_cast<SensorHit*>(hits->GetHit(i));
       if (!hit) continue;
-      auto xyz = hit->fXYZ;
+      //auto xyz = hit->fXYZ;
 
-      G4cout << "fEventNumber = " << fEventNumber << " hit number " << i 
-      << "crystal number = " << hit->fSensorID 
-      << " energy = " << hit->fEnergy 
-      << " XYZ = " << hit->fXYZ
-      << " XYZcrystal = " << hit->fPos
-      << G4endl;
+      // G4cout << "fEventNumber = " << fEventNumber << " hit number " << i 
+      // << "crystal number = " << hit->fSensorID 
+      // << " energy = " << hit->fEnergy 
+      // << " XYZ = " << hit->fXYZ
+      // << " XYZcrystal = " << hit->fPos
+      // << G4endl;
       
 
-      WriteCrystalData(fEventNumber, (unsigned int)hit->fSensorID, 
-                                hit->fEnergy, hit->fXYZ, hit->fPos);
+      WriteCrystalData(fEventNumber, (unsigned int)hit->fSensorID, hit->fTime, hit->fEnergy, hit->fXYZ);
                                
-    
     }
   
 }
 
 
-void EventAction::WriteCrystalData(int64_t evt_number, unsigned int sensor_id, double energy,
-                                   G4ThreeVector xyz, G4ThreeVector posxyz)
+void EventAction::WriteCrystalData(int64_t evt_number, unsigned int sensor_id, double time, double energy,
+                                   G4ThreeVector xyz)
 
 {
    
   std::lock_guard<std::mutex> guard(GlobalPars::Instance()->iSensorDataFileMutex);
 
-
-  GlobalPars::Instance()->iSensorDataFile << evt_number << "," << sensor_id << "," << energy << ","
-  << (float)xyz.x()<< "," << (float)xyz.y()<< "," << (float)posxyz.z()<< ","
-  << (float)posxyz.x()<<"," <<(float)posxyz.y()<<"," << (float)posxyz.z()<<"\n";
+  GlobalPars::Instance()->iSensorDataFile << evt_number << "," << sensor_id << "," 
+  << time/ns << "," << energy/keV << ","
+  << (float)xyz.x()<< "," << (float)xyz.y()<< "," << (float)xyz.z()<<"\n";
+  //<< (float)posxyz.x()<<"," <<(float)posxyz.y()<<"," << (float)posxyz.z()<<"\n";
 }

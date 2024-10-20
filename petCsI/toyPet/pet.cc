@@ -35,6 +35,12 @@ int main(int argc,char** argv)
    // Get globals 
   GlobalMessenger* gMessenger = new GlobalMessenger();
 
+  // Invoke here the PrimaryGeneratorMessenger, so that values can be
+  // passed to globals (and thus accepted by the PrimaryGenerator constructor)
+  
+  PrimaryGeneratorMessenger* pgMessenger = new PrimaryGeneratorMessenger();
+
+
   // Get the pointer to the User Interface manager
   auto UImanager = G4UImanager::GetUIpointer();
 
@@ -55,7 +61,9 @@ int main(int argc,char** argv)
     }
   else
     {
-      G4cout << "Wrong arguments. Call is <./petApp init_global.mac [run.mac]>" << G4endl;
+      G4cout << "Wrong arguments" << G4endl;
+      G4cout << " In interactive mode <./petApp init_global.mac>" << G4endl;
+      G4cout << " In batch mode.  <./petApp init_global.mac run.mac>" << G4endl;
      return 1;
     }
   
@@ -93,11 +101,7 @@ int main(int argc,char** argv)
   // Detector construction
   runManager->SetUserInitialization(new DetectorConstruction());
 
-  // Invoke here the PrimaryGeneratorMessenger, so that values can be
-  // passed to globals (and thus accepted by the PrimaryGenerator constructor)
   
-  //PrimaryGeneratorMessenger* pgMessenger = new PrimaryGeneratorMessenger();
-
   // Physics list
   auto physicsList = new QBBC;
   physicsList->SetVerboseLevel(0);
@@ -163,7 +167,7 @@ void set_output_files(std::string l4d)
 
 
   GlobalPars::Instance()->iSensorDataFile.open(isdf);
-  GlobalPars::Instance()->iSensorDataFile << "event,sensor_id,energy,x,y,z,xc,yc,zc\n";
+  GlobalPars::Instance()->iSensorDataFile << "event,sensor_id,timeNS,energyKeV,xMM,yMM,zMM\n";
   
 }
 
@@ -175,9 +179,9 @@ std::string set_histo_filename(std::string l4d)
 
 void write_global_pars(std::string l4d)
 {
-  std::string sdf = "global_pars_" + l4d + ".csv";
+  std::string sdf = GlobalPars::Instance()->fGlobalDataFileName + l4d + ".csv";
   GlobalPars::Instance()->globalsFile.open(sdf);
-  std::string xl1 ="seed,numberOfEvents,gammaEnergy,crystalWidth,crystalLength,material";
+  std::string xl1 ="seed,numberOfEvents,gammaEnergy,crystalWidth,crystalLength,material,";
   std::string xl2 ="petDiameter,petLength,nRings,crystalsRing,nCrystals\n";
   GlobalPars::Instance()->globalsFile << xl1 + xl2;
   GlobalPars::Instance()->globalsFile << GlobalPars::Instance()->fSeed << "," << 

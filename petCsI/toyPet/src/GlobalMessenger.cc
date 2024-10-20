@@ -29,6 +29,11 @@ GlobalMessenger::GlobalMessenger()
   fISensorDataCmd->SetParameterName("integratedSensorData",false);
   fISensorDataCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fGlobalDataCmd = new G4UIcmdWithAString("/globalpars/GlobalDataFileName", this);
+  fGlobalDataCmd->SetGuidance("Name of file with global data");
+  fGlobalDataCmd->SetParameterName("gobalData",false);
+  fGlobalDataCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   fHistosCmd = new G4UIcmdWithAString("/globalpars/HistogramsFileName", this);
   fHistosCmd->SetGuidance("Name of file with histograms");
   fHistosCmd->SetParameterName("controlHistograms",false);
@@ -44,6 +49,7 @@ GlobalMessenger::~GlobalMessenger()
   delete fDirectory ;
   delete fSeedCmd;
   delete fISensorDataCmd ;
+  delete fGlobalDataCmd ;
   delete fHistosCmd;
 }
 
@@ -61,6 +67,12 @@ void GlobalMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     {
       G4cout << " Got new value for integrated sensor data = " << newValue << G4endl;
       GlobalPars::Instance()->fISensorDataFileName = newValue;
+    }
+
+  if( command ==  fGlobalDataCmd )
+    {
+      G4cout << " Got new value for global data = " << newValue << G4endl;
+      GlobalPars::Instance()->fGlobalDataFileName = newValue;
     }
   
   if( command ==  fHistosCmd )

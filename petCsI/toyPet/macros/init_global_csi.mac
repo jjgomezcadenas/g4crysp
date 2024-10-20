@@ -4,7 +4,8 @@
 #fSeed=12340001 and 12341000
 #e.g, 1000 files (with 10^4 events that's a total of 10^7 events)
 
-
+/primary/gammaEnergy 511 keV
 # names of files
-/globalpars/ISensorDataFileName pet_data_csi_ 
-/globalpars/HistogramsFileName control_histograms_csi_ 
+/globalpars/ISensorDataFileName pet_data_csi_heart_w32_ 
+/globalpars/GlobalDataFileName global_data_csi_heart_w32_ 
+/globalpars/HistogramsFileName control_histograms_csi_w32_ 

@@ -30,6 +30,7 @@ public:
   G4int fEventShift;
 
   std::string fISensorDataFileName;
+  std::string fGlobalDataFileName;
   std::string fHistoFileName;
   
   std::ofstream iSensorDataFile;

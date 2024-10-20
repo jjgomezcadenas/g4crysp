@@ -26,7 +26,8 @@ public:
   
   G4int fSensorID = -1;        // Crystal ID number
   G4double fEnergy;            // energy of gamma
-  G4ThreeVector fPos;   // Position of crystal
+  G4double fTime;            // time of gamma
+  //G4ThreeVector fPos;   // Position of crystal
   G4ThreeVector fXYZ;   // Position of impact of gamma
 
 };

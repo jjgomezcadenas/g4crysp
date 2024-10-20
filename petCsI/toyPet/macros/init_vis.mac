@@ -11,10 +11,10 @@
 
 # User defined pars
 
-/detector/crystalMaterial CsI
-/detector/crystalWidth 48 mm
+/detector/crystalMaterial BGO
+/detector/crystalWidth 32 mm
 /detector/crystalX0Length 2
-/detector/teflonThickness 0.08 mm
+/detector/teflonThickness 1 mm
 /detector/teflonCoatings 5
 /detector/petDiameter 774 mm
 /detector/petLength 1024 mm

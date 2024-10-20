@@ -5,6 +5,8 @@
 #include "G4NistManager.hh"
 #include "G4Box.hh"
 #include "G4Sphere.hh"
+#include "G4Tubs.hh"
+#include <G4EllipticalTube.hh>
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
@@ -131,8 +133,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   //----Teflon ----------
   // Teflown wrapping = thickness of wrap x number of wraps
-  //auto teflon_thickness_tot = fTeflonThickness * fTeflonCoatings;
-  auto teflon_thickness_tot = 1*mm;
+  auto teflon_thickness_tot = fTeflonThickness * fTeflonCoatings;
+  //auto teflon_thickness_tot = 1*mm;
    
   // ----Crystal + Teflon box ------
 
@@ -201,23 +203,97 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       }
     }
 
-  // start with a mynimalistic phantom. A sphere of 1 cm placed in the center of the scanner.
-  // Define the sphere geometry
+  // Define as a phantom a trunk with a spherical hart
+  
+  auto phantom = Phantom();
 
-  auto radius = 0.5 * cm;  // Sphere radius (1 cm diameter)
-  auto solidSphere = new G4Sphere("Sphere", 0.0, radius, 0.0, 360.0 * deg, 0.0, 180.0 * deg);
+  new G4PVPlacement(0, G4ThreeVector(0, 0, 0), phantom, "PHANTOM", lab_logic, false, 0, true);
 
-  // Create the logical volume
-  auto logicSphere = new G4LogicalVolume(solidSphere, air, "Organ");
-  logicSphere->SetVisAttributes(G4Colour::Red ());
+  // auto radius = 0.5 * cm;  // Sphere radius (1 cm diameter)
+  // auto solidSphere = new G4Sphere("Sphere", 0.0, radius, 0.0, 360.0 * deg, 0.0, 180.0 * deg);
 
-  // Place the sphere in the world 
-  new G4PVPlacement(0, G4ThreeVector(), logicSphere, "Organ",  lab_logic,      
-                                      false,  0,  true); 
+  // // Create the logical volume
+  // auto logicSphere = new G4LogicalVolume(solidSphere, air, "Organ");
+  // logicSphere->SetVisAttributes(G4Colour::Red ());
+
+  // // Place the sphere in the world 
+  // new G4PVPlacement(0, G4ThreeVector(), logicSphere, "Organ",  lab_logic,      
+  //                                     false,  0,  true); 
 
   return lab_phys;
 }
 
+G4LogicalVolume* DetectorConstruction::Phantom()
+{
+  auto air     = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+  auto body    = new G4Tubs("PHANTOM", 0, 0.21 * m, 0.95 * m, 0, twopi);
+  auto body_logic = new G4LogicalVolume(body, air, "PHANTOM");
+  body_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+  // TRUNK
+  auto dx = 20. * cm;
+  auto dy = 10. * cm;
+  auto dz = 35. * cm;
+
+  auto soft = G4NistManager::Instance()->FindOrBuildMaterial("G4_TISSUE_SOFT_ICRP");
+  auto trunk = new G4EllipticalTube("Trunk", dx, dy, dz);
+
+  auto logicTrunk = new G4LogicalVolume(trunk, soft,
+                                         "logicalTrunk",
+                                         nullptr, nullptr, nullptr);
+  // Define rotation and position here!
+  auto rm2 = new G4RotationMatrix();
+  rm2->rotateX(180. * degree);
+  rm2->rotateY(180. * degree);
+  new G4PVPlacement(rm2,
+                    G4ThreeVector(0. * cm, 0. * cm, 20. * cm),
+                    logicTrunk,
+                    "trunk",
+                    body_logic,
+                    false,
+                    0, true);
+  // Visualization Attributes
+  logicTrunk->SetVisAttributes(cvis::WhiteAlpha());
+
+  // Heart
+  // ax = 4.00 * cm;
+  // by = 4.00 * cm;
+  // cz = 7.00 * cm;
+  // zcut1 = -7.00 * cm;
+  // zcut2 = 0.0 * cm;
+
+  // auto heart1 = new G4Ellipsoid("Heart1", ax, by, cz, zcut1, zcut2);
+
+  auto rmin = 0. * cm;
+  auto rmax = 3.99 * cm;
+  auto startphi = 0. * degree;
+  auto deltaphi = 360. * degree;
+  auto starttheta = 0. * degree;
+  auto deltatheta = 90. * degree;
+
+  auto heart2 = new G4Sphere("Heart", rmin, rmax,
+                              startphi, deltaphi,
+                              starttheta, deltatheta);
+
+  //auto *heart = new G4UnionSolid("Heart", heart1, heart2);
+
+  auto logicHeart = new G4LogicalVolume(heart2, soft,
+                                         "Heart",
+                                         nullptr, nullptr, nullptr);
+  logicHeart->SetVisAttributes(cvis::BloodRedAlpha());
+  // Define rotation and position here!
+  auto rm = new G4RotationMatrix();
+  rm->rotateY(25. * degree);
+  new G4PVPlacement(rm, G4ThreeVector(0.0, -3.0 * cm, 15.32 * cm),
+                    logicHeart,
+                    "Heart",
+                    logicTrunk,
+                    false,
+                    0, true);
+
+  return body_logic;
+  
+}
 
 void DetectorConstruction::ConstructSDandField()
 {

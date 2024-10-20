@@ -6,6 +6,7 @@
 #include <fstream>
 
 class G4VPhysicalVolume;
+class G4LogicalVolume;
 class DetectorMessenger;
 class G4Material;
 
@@ -23,6 +24,7 @@ public:
 
 private:
   G4Material* DefineMaterial();
+  G4LogicalVolume* Phantom();
   DetectorMessenger* fMessenger = nullptr; // messenger
   
 public:

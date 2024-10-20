@@ -22,8 +22,12 @@ public:
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
   void StoreSensorHits(G4VHitsCollection* hc);
-  void WriteCrystalData(int64_t evt_number, unsigned int sensor_id, double energy,
-                                   G4ThreeVector xyz, G4ThreeVector posxyz);
+
+  void WriteCrystalData(int64_t evt_number, unsigned int sensor_id, double time, double energy,
+                                   G4ThreeVector xyz);
+
+  //void WriteCrystalData(int64_t evt_number, unsigned int sensor_id, double energy,
+   //                                G4ThreeVector xyz, G4ThreeVector posxyz);
 
 
   G4int fEventNumber;

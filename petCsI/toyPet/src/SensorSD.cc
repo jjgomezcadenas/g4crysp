@@ -65,14 +65,14 @@ void SensorSD::Initialize(G4HCofThisEvent* HCE)
 G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
   
-  G4cout << "++++++inside ProcessHits+++++" << G4endl;
+  //G4cout << "++++++inside ProcessHits+++++" << G4endl;
 
   // Get sure that we are in crystal
   G4Material* mat = fenvLV->GetMaterial();
 
-  G4cout << "material =" << mat->GetName() 
+  //G4cout << "material =" << mat->GetName() 
   // << " fMaterial = " << GlobalPars::Instance()->fMaterial
-  << G4endl;
+ // << G4endl;
 
   if (mat->GetName() != GlobalPars::Instance()->fMaterial){ // must be CsI, BGO...
     return false;
@@ -82,8 +82,8 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   auto parentID = track->GetParentID();
   auto trkid = track->GetTrackID();
 
-  G4cout << "parentID =" << parentID << " trkid = " << trkid
-  << G4endl;
+  //G4cout << "parentID =" << parentID << " trkid = " << trkid
+  //<< G4endl;
 
   // Must be primary gamma
 
@@ -94,10 +94,17 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
   auto postep = step->GetPostStepPoint();
   auto posxyz = postep->GetPosition(); 
+  auto post   = postep->GetGlobalTime() ;
+  auto poske  = postep->GetKineticEnergy() ;
+    
      
   auto touchable = step->GetPostStepPoint()->GetTouchable();
   auto sensor_id = FindSensorID(touchable);
   
+  if (poske == 0){
+    return false;
+  }
+
   SensorHit* hit = nullptr;
 
   for (size_t i=0; i<fHitsCollection->entries(); i++) {
@@ -113,20 +120,22 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   
   if (!hit)
     {
-      G4cout << "--Create a new hit =" << G4endl;
+      //G4cout << "--Create a new hit =" << G4endl;
 
       hit = new SensorHit();
       hit->fSensorID = sensor_id;
-      hit->fPos = touchable->GetTranslation();
-      hit->fEnergy = track->GetTotalEnergy();
+      //hit->fPos = touchable->GetTranslation();
+      //hit->fEnergy = track->GetTotalEnergy();
+      hit->fEnergy = poske;
       hit->fXYZ = posxyz;
+      hit->fTime = post ;
       fHitsCollection->insert(hit);
 
-      G4cout << "crystal number = " << sensor_id
-      << " energy = " << hit->fEnergy 
-      << " XYZ = " << hit->fXYZ
-      << " XYZcrystal = " << hit->fPos
-      << G4endl;
+      // G4cout << "crystal number = " << sensor_id
+      // << " energy = " << hit->fEnergy 
+      // << " XYZ = " << hit->fXYZ
+      // << " time = " << hit->fTime
+      // << G4endl;
     }
 
   track->SetTrackStatus(fStopAndKill); //hit registered we can kill the track
@@ -138,13 +147,13 @@ G4bool SensorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 G4int SensorSD::FindSensorID(const G4VTouchable* touchable)
 {
 
-  std::cout << "+++FindSensorID " << std::endl;
+  //std::cout << "+++FindSensorID " << std::endl;
 
   auto sensorid = touchable->GetCopyNumber(0); // "CYRSTAL", one copy per CRYSTALT = 0
-  std::cout << "sensor id = " << sensorid  << std::endl;
+  //std::cout << "sensor id = " << sensorid  << std::endl;
 
   auto  motherid = touchable->GetCopyNumber(1);// Crystal id, ncrystal copies.
-  std::cout << " motherid =" << motherid << std::endl;
+  //std::cout << " motherid =" << motherid << std::endl;
 
   sensorid = motherid + sensorid; //sensorid =0 always in this example, but keep like this for clarity
   

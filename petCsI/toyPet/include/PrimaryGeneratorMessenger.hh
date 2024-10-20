@@ -15,16 +15,16 @@ class PrimaryGeneratorAction;
 
 class PrimaryGeneratorMessenger : public G4UImessenger {
 public:
-  PrimaryGeneratorMessenger(PrimaryGeneratorAction* pg);
+  //PrimaryGeneratorMessenger(PrimaryGeneratorAction* pg);
  
- //PrimaryGeneratorMessenger();
+  PrimaryGeneratorMessenger();
   ~PrimaryGeneratorMessenger() override;
 
   void SetNewValue(G4UIcommand* command, G4String newValue) override;
 
 private:
 
-  PrimaryGeneratorAction*  fPrimaryGeneratorAction = nullptr;
+  //PrimaryGeneratorAction*  fPrimaryGeneratorAction = nullptr;
   G4UIdirectory*              fDirectory = nullptr;
   G4UIcmdWithADoubleAndUnit*  fEnergyCmd = nullptr;
   

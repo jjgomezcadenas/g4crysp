@@ -23,6 +23,7 @@ private:
   G4UIdirectory*           fDirectory = nullptr;
   G4UIcmdWithAnInteger*    fSeedCmd = nullptr;
   G4UIcmdWithAString*      fISensorDataCmd = nullptr;
+  G4UIcmdWithAString*      fGlobalDataCmd = nullptr;
   G4UIcmdWithAString*      fHistosCmd = nullptr;
   
 };
