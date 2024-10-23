@@ -1,0 +1,49 @@
+# Set some default verbose
+/control/verbose 1
+/control/saveHistory
+/run/verbose 1
+#
+# Change the default number of threads (in multi-threaded mode)
+/run/numberOfThreads 1
+/globalpars/seed 12340001 # change the seed for multiple runs to 0002, 0003 etc.
+
+# User defined pars
+
+/detector/crystalMaterial CsI 
+/detector/crystalWidth 48 mm
+/detector/crystalX0Length 2
+/detector/teflonThickness 1 mm
+/detector/sipmXY 24 mm
+/detector/sipmZ 0.5 mm
+/detector/sipmActiveXY 23.9 mm
+/detector/sipmActiveZ 0.02 mm
+/detector/epoxyZ 0.15 mm
+
+/primary/timeBinning 100 ns
+/primary/gammaEnergy 1 keV
+#
+# Initialize kernel
+
+/run/initialize
+
+
+###/run/beamOn 1000
+
+/vis/open OGL 600x600-0+0
+/vis/viewer/set/autoRefresh false
+/vis/drawVolume
+#/vis/viewer/set/viewpointThetaPhi 90 180
+/vis/scene/add/axes 0 0 0 10 cm
+/vis/viewer/set/viewpointVector -1 0 0
+#/vis/viewer/set/lightsVector -1 0 0
+#
+# Specify style (surface, wireframe, auxiliary edges,...)
+#/vis/viewer/set/style surface
+/vis/viewer/set/auxiliaryEdge true
+#/vis/viewer/set/lineSegmentsPerCircle 100
+###/vis/sceneHandler/attach
+
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+
+
