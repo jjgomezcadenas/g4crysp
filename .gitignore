@@ -34,5 +34,7 @@
 # Ignore the build directory
 build/
 
+# Ignore the DS_Store
+.DS_Store
 # emcas
 *~*
