@@ -41,4 +41,4 @@
 # or 5 runs of 20,000, but do not mix. This is because the length of
 # events is used to compute the shift in the next job within the run. 
 
-/run/beamOn 100
+/run/beamOn 1000
